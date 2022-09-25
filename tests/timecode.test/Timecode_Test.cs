@@ -1,31 +1,76 @@
-﻿using FluentAssertions;
+﻿
+using FluentAssertions;
 
 namespace timecode.test
 {
   public class Timecode_Test
   {
     [Fact]
-    public void Construct_With_2997_Drop_Frame_Using_TotalFrames()
+    public void Construct_Using_TotalFrames_24fps()
     {
-      //Variable source
-      //https://www.cinelexi.com/tc-calc
-      var tenHours2997DropFrame = 1078920;
-
-      var sut = new Timecode(tenHours2997DropFrame, Enums.Framerate.fps29_97_DF);
-
+      var tenHoursAsTotalFrames = 864000;
+      var sut = new Timecode(tenHoursAsTotalFrames, Enums.Framerate.fps24);
       sut.ToString().Should().Be("10:00:00:00");
     }
 
     [Fact]
-    public void Construct_With_5994_Drop_Frame_Using_TotalFrames()
+    public void Construct_Using_TotalFrames_25fps()
     {
-      //Variable source
-      //https://www.cinelexi.com/tc-calc
-      var tenHours5994DropFrame = 2157840;
-
-      var sut = new Timecode(tenHours5994DropFrame, Enums.Framerate.fps59_94_DF);
-
+      var tenHoursAsTotalFrames = 900000;
+      var sut = new Timecode(tenHoursAsTotalFrames, Enums.Framerate.fps25);
       sut.ToString().Should().Be("10:00:00:00");
+    }
+
+    [Fact]
+    public void Construct_Using_TotalFrames_Drop_Frame_29_97fps()
+    {
+      var tenHoursAsTotalFrames = 1078920;
+      var sut = new Timecode(tenHoursAsTotalFrames, Enums.Framerate.fps29_97_DF);
+      sut.ToString().Should().Be("10:00:00:00");
+    }
+
+    [Fact]
+    public void Construct_Using_TotalFrames_Drop_Frame_59_94fps()
+    {
+      var tenHoursAsTotalFrames = 2157840;
+      var sut = new Timecode(tenHoursAsTotalFrames, Enums.Framerate.fps59_94_DF);
+      sut.ToString().Should().Be("10:00:00:00");
+    }
+
+    [Fact]
+    public void Construct_Using_hhmmssff_23_976fps()
+    {
+      var sut = new Timecode(10, 00, 00, 00, Enums.Framerate.fps23_976);
+      sut.TotalFrames.Should().Be(864000);
+    }
+
+    [Fact]
+    public void Construct_Using_hhmmssff_50fps()
+    {
+      var sut = new Timecode(10, 00, 00, 00, Enums.Framerate.fps50);
+      sut.TotalFrames.Should().Be(1800000);
+    }
+
+    [Fact]
+    public void Construct_Using_hhmmssff_Drop_Frame_59_94fps()
+    {
+      var sut = new Timecode(10, 00, 00, 00, Enums.Framerate.fps59_94_DF);
+      sut.TotalFrames.Should().Be(2157840);
+    }
+
+    [Fact]
+    public void Construct_Using_String_Input()
+    {
+      var sut = new Timecode("10:00:00:00", Enums.Framerate.fps24);
+      sut.TotalFrames.Should().Be(864000);
+    }
+
+    [Fact]
+    public void Construct_Using_Incorrect_Format_Input()
+    {
+      string incorrectTimecodeFormat = "10:a0:00:00";
+      Action act = () => new Timecode(incorrectTimecodeFormat, Enums.Framerate.fps24);
+      act.Should().Throw<ArgumentException>();
     }
   }
 }
