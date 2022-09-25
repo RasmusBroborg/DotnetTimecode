@@ -34,12 +34,12 @@ namespace timecode
     /// <summary>
     /// The timecodes total amount of frames.
     /// </summary>
-    public int TotalFrames { get; set; }
+    public int TotalFrames { get; private set; }
 
     /// <summary>
     /// The timecode framerate.
     /// </summary>
-    public Framerate Framerate { get; set; }
+    public Framerate Framerate { get; private set; }
 
     /// <summary>
     /// Returns the timecode as a string formatted hh:mm:ss:ff. 
@@ -74,7 +74,7 @@ namespace timecode
     {
       TotalFrames = totalFrames;
       Framerate = framerate;
-      SetTimeCodeValues();
+      UpdateHoursMinutesSecondsFrames();
     }
 
     /// <summary>
@@ -93,14 +93,7 @@ namespace timecode
       Frame = frame;
       Framerate = framerate;
 
-      if (Framerate == Framerate.fps29_97_DF || Framerate == Framerate.fps59_94_DF)
-      {
-        SetTotalFramesUsingDropFrames(Hour, Minute, Second, Frame);
-      }
-      else
-      {
-        SetTotalFrames(Hour, Minute, Second, Frame);
-      }
+      UpdateTotalFrames();
     }
 
     /// <summary>
@@ -121,14 +114,7 @@ namespace timecode
       Frame = Convert.ToInt32(hhmmssff[3]);
       Framerate = framerate;
 
-      if (Framerate == Framerate.fps29_97_DF || Framerate == Framerate.fps59_94_DF)
-      {
-        SetTotalFramesUsingDropFrames(Hour, Minute, Second, Frame);
-      }
-      else
-      {
-        SetTotalFrames(Hour, Minute, Second, Frame);
-      }
+      UpdateTotalFrames();
     }
 
     /// <summary>
@@ -138,7 +124,7 @@ namespace timecode
     public void AddHours(int hours)
     {
       throw new NotImplementedException();
-      SetTimeCodeValues();
+      UpdateHoursMinutesSecondsFrames();
     }
 
     /// <summary>
@@ -149,7 +135,7 @@ namespace timecode
     public void AddMinutes(int minutes)
     {
       throw new NotImplementedException();
-      SetTimeCodeValues();
+      UpdateHoursMinutesSecondsFrames();
     }
 
     /// <summary>
@@ -158,8 +144,7 @@ namespace timecode
     /// <param name="seconds">Number of seconds to add to the timecode.</param>
     public void AddSeconds(int seconds)
     {
-      throw new NotImplementedException();
-      SetTimeCodeValues();
+      UpdateHoursMinutesSecondsFrames();
     }
 
     /// <summary>
@@ -168,8 +153,18 @@ namespace timecode
     /// <param name="frames">Number of frames to add to the timecode.</param>
     public void AddFrames(int frames)
     {
-      throw new NotImplementedException();
-      SetTimeCodeValues();
+      TotalFrames += frames;
+      UpdateHoursMinutesSecondsFrames();
+    }
+
+    /// <summary>
+    /// Converts the Timecode to the target framerate.
+    /// </summary>
+    /// <param name="targetFramerate"></param>
+    public void ConvertFramerate(Framerate targetFramerate)
+    {
+      Framerate = targetFramerate;
+      UpdateHoursMinutesSecondsFrames();
     }
 
     /// <summary>
@@ -178,7 +173,19 @@ namespace timecode
     /// <returns>A string representation of a number value in the format of ex: "09".</returns>
     private string ZeroPadding(int num) => num < 10 ? $"0{num}" : num.ToString();
 
-    private void SetTimeCodeValues()
+    private void UpdateTotalFrames()
+    {
+      if (Framerate == Framerate.fps29_97_DF || Framerate == Framerate.fps59_94_DF)
+      {
+        SetTotalFramesUsingDropFrames(Hour, Minute, Second, Frame);
+      }
+      else
+      {
+        SetTotalFrames(Hour, Minute, Second, Frame);
+      }
+    }
+
+    private void UpdateHoursMinutesSecondsFrames()
     {
       if (Framerate == Framerate.fps29_97_DF || Framerate == Framerate.fps59_94_DF)
       {

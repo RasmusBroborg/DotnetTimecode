@@ -71,5 +71,24 @@ namespace timecode.test
       Action act = () => new Timecode(incorrectTimecodeFormat, Enums.Framerate.fps24);
       act.Should().Throw<ArgumentException>();
     }
+
+    [Fact]
+    public void Add_Frames_And_Recalculate_Timecode()
+    {
+      var sut = new Timecode("10:00:00:00", Enums.Framerate.fps25);
+
+      sut.AddFrames(50);
+      sut.ToString().Should().Be("10:00:02:00");
+
+    }
+
+    [Fact]
+    public void Remove_Frames_And_Recalculate_Timecode()
+    {
+      var sut = new Timecode("10:00:00:00", Enums.Framerate.fps25);
+      sut.AddFrames(-50);
+      sut.ToString().Should().Be("09:59:58:00");
+    }
+
   }
 }
