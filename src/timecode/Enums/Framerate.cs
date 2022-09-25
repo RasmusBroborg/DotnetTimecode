@@ -14,9 +14,5 @@
     fps59_94_NDF,
     fps59_94_DF,
     fps60,
-    fps72,
-    fps96,
-    fps100,
-    fps120,
   }
 }

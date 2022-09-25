@@ -6,67 +6,27 @@ namespace timecode
   {
     /// <summary>
     /// Regular expression pattern for a timecode. 
-    /// Supports the formats "00:00:00:00" and "000:00:00:00".
+    /// Supports the format hh:mm:ss:ff.
     /// </summary>
-    public static string RegexPattern = @"(([0-9]){2,3}:){3}([0-9]){2}";
+    public static string RegexPattern = @"(([0-9]){2}:){3}([0-9]){2}";
 
     /// <summary>
     /// The timecode hour position, based on the framerate.
     /// </summary>
-    public int Hour
-    {
-      get
-      {
-        throw new NotImplementedException();
-      }
-      set
-      {
-        throw new NotImplementedException();
-      }
-    }
+    public int Hour { get; private set; }
     /// <summary>
     /// The timecode minute position, based on the framerate.
     /// </summary>
-    public int Minute
-    {
-      get
-      {
-        throw new NotImplementedException();
-      }
-      set
-      {
-        throw new NotImplementedException();
-      }
-    }
+    public int Minute { get; private set; }
     /// <summary>
     /// The timecode second position, based on the framerate.
     /// </summary>
-    public int Second
-    {
-      get
-      {
-        throw new NotImplementedException();
-      }
-      set
-      {
-        throw new NotImplementedException();
-      }
-    }
+    public int Second { get; private set; }
     /// <summary>
     /// The timecode frame position, based on the framerate after hours,
     /// minutes and seconds have been subtracted from the total frames.
     /// </summary>
-    public int Frame
-    {
-      get
-      {
-        throw new NotImplementedException();
-      }
-      set
-      {
-        throw new NotImplementedException();
-      }
-    }
+    public int Frame { get; private set; }
 
     /// <summary>
     /// The timecodes total amount of frames.
@@ -84,10 +44,10 @@ namespace timecode
     public bool DropFrame { get; set; }
 
     /// <summary>
-    /// Returns the timecode as a string formatted 00:00:00:00. 
+    /// Returns the timecode as a string formatted hh:mm:ss:ff. 
     /// Does not support negative timelines.
     /// </summary>
-    /// <returns>The timecode formatted 00:00:00:00</returns>
+    /// <returns>The timecode formatted hh:mm:ss:ff</returns>
     public override string ToString()
     {
       return $"{ZeroPadding(Hour)}:{ZeroPadding(Minute)}:{ZeroPadding(Second)}:{ZeroPadding(Frame)}";
@@ -98,7 +58,7 @@ namespace timecode
     /// </summary>
     /// <param name="totalFrames">The total amount of frames.</param>
     /// <param name="framerate">The timecode framerate.</param>
-    /// <param name="dropFrame">The timecode framerate.</param>
+    /// <param name="dropFrame">Decides if the timecode should drop frames.</param>
     public Timecode(int totalFrames, Framerate framerate, bool dropFrame = false)
     {
       throw new NotImplementedException();
@@ -112,7 +72,9 @@ namespace timecode
     /// <param name="second">The timecode second position.</param>
     /// <param name="frame">The timecode frame position.</param>
     /// <param name="framerate">The timecode framerate.</param>
-    public Timecode(int hour, int minute, int second, int frame, Framerate framerate)
+    /// <param name="dropFrame">Decides if the timecode should drop frames.</param>
+    public Timecode(int hour, int minute, int second, int frame,
+      Framerate framerate, bool dropFrame = false)
     {
       throw new NotImplementedException();
     }
@@ -120,9 +82,10 @@ namespace timecode
     /// <summary>
     /// Creates a new Timecode object.
     /// </summary>
-    /// <param name="timecode">The timecode represented as a string formatted 00:00:00:00.</param>
+    /// <param name="timecode">The timecode represented as a string formatted hh:mm:ss:ff.</param>
     /// <param name="framerate">The timecode framerate.</param>
-    public Timecode(string timecode, Framerate framerate)
+    /// <param name="dropFrame">Decides if the timecode should drop frames.</param>
+    public Timecode(string timecode, Framerate framerate, bool dropFrame = false)
     {
       throw new NotImplementedException();
     }
@@ -134,6 +97,7 @@ namespace timecode
     public void AddHours(int hours)
     {
       throw new NotImplementedException();
+      CalcTimecode();
     }
 
     /// <summary>
@@ -144,6 +108,7 @@ namespace timecode
     public void AddMinutes(int minutes)
     {
       throw new NotImplementedException();
+      CalcTimecode();
     }
 
     /// <summary>
@@ -153,6 +118,7 @@ namespace timecode
     public void AddSeconds(int seconds)
     {
       throw new NotImplementedException();
+      CalcTimecode();
     }
 
     /// <summary>
@@ -162,12 +128,42 @@ namespace timecode
     public void AddFrames(int frames)
     {
       throw new NotImplementedException();
+      CalcTimecode();
     }
 
     /// <summary>
     /// Pads the first number position with a 0 if the number is less than two positions long.
     /// </summary>
-    /// <returns>A string representation of a number value in the format of ex: "09" or "100".</returns>
+    /// <returns>A string representation of a number value in the format of ex: "09".</returns>
     private string ZeroPadding(int num) => num < 10 ? $"0{num}" : num.ToString();
+
+    private void CalcTimecode()
+    {
+      int remainingFrames = TotalFrames;
+      CalcHour(ref remainingFrames);
+      CalcMinute(ref remainingFrames);
+      CalcSecond(ref remainingFrames);
+      CalcFrame(ref remainingFrames);
+    }
+
+    private void CalcHour(ref int remainingFrames)
+    {
+      throw new NotImplementedException();
+    }
+
+    private void CalcMinute(ref int remainingFrames)
+    {
+      throw new NotImplementedException();
+    }
+
+    private void CalcSecond(ref int remainingFrames)
+    {
+      throw new NotImplementedException();
+    }
+
+    private void CalcFrame(ref int remainingFrames)
+    {
+      throw new NotImplementedException();
+    }
   }
 }
