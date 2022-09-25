@@ -54,9 +54,22 @@ namespace timecode
     /// <summary>
     /// Creates a new Timecode object.
     /// </summary>
+    /// <param name="framerate">The timecode framerate.</param>
+    public Timecode(Framerate framerate)
+    {
+      TotalFrames = 0;
+      Hour = 0;
+      Minute = 0;
+      Second = 0;
+      Frame = 0;
+      Framerate = framerate;
+    }
+
+    /// <summary>
+    /// Creates a new Timecode object.
+    /// </summary>
     /// <param name="totalFrames">The total amount of frames.</param>
     /// <param name="framerate">The timecode framerate.</param>
-    /// <param name="dropFrame">Decides if the timecode should drop frames.</param>
     public Timecode(int totalFrames, Framerate framerate)
     {
       TotalFrames = totalFrames;
@@ -72,7 +85,6 @@ namespace timecode
     /// <param name="second">The timecode second position.</param>
     /// <param name="frame">The timecode frame position.</param>
     /// <param name="framerate">The timecode framerate.</param>
-    /// <param name="dropFrame">Decides if the timecode should drop frames.</param>
     public Timecode(int hour, int minute, int second, int frame, Framerate framerate)
     {
       Hour = hour;
@@ -96,7 +108,6 @@ namespace timecode
     /// </summary>
     /// <param name="timecode">The timecode represented as a string formatted hh:mm:ss:ff.</param>
     /// <param name="framerate">The timecode framerate.</param>
-    /// <param name="dropFrame">Decides if the timecode should drop frames.</param>
     public Timecode(string timecode, Framerate framerate)
     {
       Regex tcRegex = new Regex(RegexPattern);
