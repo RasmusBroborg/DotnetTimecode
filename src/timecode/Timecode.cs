@@ -1,4 +1,5 @@
 ﻿using timecode.Enums;
+using timecode.Helpers;
 
 namespace timecode
 {
@@ -39,11 +40,6 @@ namespace timecode
     public Framerate Framerate { get; set; }
 
     /// <summary>
-    /// Whether or not the timecode should drop frames or not.
-    /// </summary>
-    public bool DropFrame { get; set; }
-
-    /// <summary>
     /// Returns the timecode as a string formatted hh:mm:ss:ff. 
     /// Does not support negative timelines.
     /// </summary>
@@ -59,9 +55,11 @@ namespace timecode
     /// <param name="totalFrames">The total amount of frames.</param>
     /// <param name="framerate">The timecode framerate.</param>
     /// <param name="dropFrame">Decides if the timecode should drop frames.</param>
-    public Timecode(int totalFrames, Framerate framerate, bool dropFrame = false)
+    public Timecode(int totalFrames, Framerate framerate)
     {
-      throw new NotImplementedException();
+      TotalFrames = totalFrames;
+      Framerate = framerate;
+      CalcTimecode();
     }
 
     /// <summary>
@@ -73,8 +71,7 @@ namespace timecode
     /// <param name="frame">The timecode frame position.</param>
     /// <param name="framerate">The timecode framerate.</param>
     /// <param name="dropFrame">Decides if the timecode should drop frames.</param>
-    public Timecode(int hour, int minute, int second, int frame,
-      Framerate framerate, bool dropFrame = false)
+    public Timecode(int hour, int minute, int second, int frame, Framerate framerate)
     {
       throw new NotImplementedException();
     }
@@ -85,7 +82,7 @@ namespace timecode
     /// <param name="timecode">The timecode represented as a string formatted hh:mm:ss:ff.</param>
     /// <param name="framerate">The timecode framerate.</param>
     /// <param name="dropFrame">Decides if the timecode should drop frames.</param>
-    public Timecode(string timecode, Framerate framerate, bool dropFrame = false)
+    public Timecode(string timecode, Framerate framerate)
     {
       throw new NotImplementedException();
     }
@@ -139,31 +136,52 @@ namespace timecode
 
     private void CalcTimecode()
     {
-      int remainingFrames = TotalFrames;
-      CalcHour(ref remainingFrames);
-      CalcMinute(ref remainingFrames);
-      CalcSecond(ref remainingFrames);
-      CalcFrame(ref remainingFrames);
+      if (Framerate == Framerate.fps29_97_DF || Framerate == Framerate.fps59_94_DF)
+      {
+        CalcTotalFramesToDropFrame(TotalFrames);
+      }
+      else
+      {
+      }
     }
 
-    private void CalcHour(ref int remainingFrames)
+    private void CalcTotalFramesToDropFrame(int totalFrames)
     {
-      throw new NotImplementedException();
-    }
+      decimal framerate = FramerateValues.FramerateAsDecimals[Framerate];
 
-    private void CalcMinute(ref int remainingFrames)
-    {
-      throw new NotImplementedException();
-    }
+      int div;
+      int mod;
 
-    private void CalcSecond(ref int remainingFrames)
-    {
-      throw new NotImplementedException();
-    }
+      int dropFrames = Convert.ToInt32(Math.Round(framerate * .066666m));
+      int framesPerMinute = Convert.ToInt32((Math.Round(framerate) * 60) - dropFrames);
+      int framesPer10Minutes = Convert.ToInt32(Math.Round(framerate * 60 * 10));
+      int framesPerHour = Convert.ToInt32(Math.Round(framerate * 60 * 60));
+      int framesPer24Hours = framesPerHour * 24;
 
-    private void CalcFrame(ref int remainingFrames)
-    {
-      throw new NotImplementedException();
+      while (totalFrames < 0)
+      {
+        totalFrames = framesPer24Hours + totalFrames;
+      }
+
+      totalFrames = totalFrames % framesPer24Hours;
+
+      div = totalFrames / framesPer10Minutes;
+      mod = totalFrames % framesPer10Minutes;
+
+      if (mod > dropFrames)
+      {
+        totalFrames = totalFrames + (dropFrames * 9 * div) + dropFrames * ((mod - dropFrames) / framesPerMinute);
+      }
+      else
+      {
+        totalFrames = totalFrames + dropFrames * 9 * div;
+      }
+
+      int frRound = Convert.ToInt32((Math.Round(framerate)));
+      Frame = totalFrames % frRound;
+      Second = (totalFrames / frRound) % 60;
+      Minute = ((totalFrames / frRound) / 60) % 60;
+      Hour = (((totalFrames / frRound) / 60) / 60);
     }
   }
 }
