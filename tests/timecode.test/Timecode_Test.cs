@@ -6,11 +6,10 @@ namespace timecode.test
   public class Timecode_Test
   {
     [Fact]
-    public void Construct_Using_TotalFrames_24fps()
+    public void Construct_Using_Only_Framerate()
     {
-      var tenHoursAsTotalFrames = 864000;
-      var sut = new Timecode(tenHoursAsTotalFrames, Enums.Framerate.fps24);
-      sut.ToString().Should().Be("10:00:00:00");
+      var sut = new Timecode(Enums.Framerate.fps24);
+      sut.ToString().Should().Be("00:00:00:00");
     }
 
     [Fact]
