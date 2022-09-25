@@ -79,7 +79,6 @@ namespace timecode.test
 
       sut.AddFrames(50);
       sut.ToString().Should().Be("10:00:02:00");
-
     }
 
     [Fact]
@@ -90,5 +89,20 @@ namespace timecode.test
       sut.ToString().Should().Be("09:59:58:00");
     }
 
+    [Fact]
+    public void Convert_Framerate_24fps_To_25fps()
+    {
+      var sut = new Timecode("10:00:00:00", Enums.Framerate.fps24);
+      sut.ConvertFramerate(Enums.Framerate.fps25);
+      sut.ToString().Should().Be("09:36:00:00");
+    }
+
+    [Fact]
+    public void Convert_Framerate_23_976fps_To_59_94fps()
+    {
+      var sut = new Timecode("10:00:00:00", Enums.Framerate.fps23_976);
+      sut.ConvertFramerate(Enums.Framerate.fps59_94_NDF);
+      sut.ToString().Should().Be("04:00:00:00");
+    }
   }
 }
