@@ -5,6 +5,12 @@ namespace timecode
   public class Timecode
   {
     /// <summary>
+    /// Regular expression pattern for a timecode. 
+    /// Supports the formats "00:00:00:00" and "000:00:00:00".
+    /// </summary>
+    public static string RegexPattern = @"(([0-9]){2,3}:){3}([0-9]){2}";
+
+    /// <summary>
     /// The timecode hour position, based on the framerate.
     /// </summary>
     public int Hour
@@ -73,6 +79,11 @@ namespace timecode
     public Framerate Framerate { get; set; }
 
     /// <summary>
+    /// Whether or not the timecode should drop frames or not.
+    /// </summary>
+    public bool DropFrame { get; set; }
+
+    /// <summary>
     /// Returns the timecode as a string formatted 00:00:00:00. 
     /// Does not support negative timelines.
     /// </summary>
@@ -87,7 +98,8 @@ namespace timecode
     /// </summary>
     /// <param name="totalFrames">The total amount of frames.</param>
     /// <param name="framerate">The timecode framerate.</param>
-    public Timecode(int totalFrames, Framerate framerate)
+    /// <param name="dropFrame">The timecode framerate.</param>
+    public Timecode(int totalFrames, Framerate framerate, bool dropFrame = false)
     {
       throw new NotImplementedException();
     }
