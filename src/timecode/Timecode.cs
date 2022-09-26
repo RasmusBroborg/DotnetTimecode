@@ -124,7 +124,7 @@ namespace timecode
     public void AddHours(int hours)
     {
       throw new NotImplementedException();
-      UpdateHoursMinutesSecondsFrames();
+      UpdateTotalFrames();
     }
 
     /// <summary>
@@ -134,8 +134,13 @@ namespace timecode
     /// <exception cref="NotImplementedException"></exception>
     public void AddMinutes(int minutes)
     {
-      throw new NotImplementedException();
-      UpdateHoursMinutesSecondsFrames();
+      int div = minutes / 60;
+      int mod = minutes % 60;
+
+      Hour = Hour += div;
+      Minute = Minute += mod;
+
+      UpdateTotalFrames();
     }
 
     /// <summary>
@@ -144,7 +149,7 @@ namespace timecode
     /// <param name="seconds">Number of seconds to add to the timecode.</param>
     public void AddSeconds(int seconds)
     {
-      UpdateHoursMinutesSecondsFrames();
+      UpdateTotalFrames();
     }
 
     /// <summary>
