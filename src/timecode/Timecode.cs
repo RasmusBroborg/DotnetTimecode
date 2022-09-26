@@ -11,23 +11,22 @@ namespace timecode
     /// Regular expression pattern for a timecode. 
     /// Supports the format hh:mm:ss:ff.
     /// </summary>
-    public static string RegexPattern = @"(([0-9]){2}:){3}([0-9]){2}";
+    public static readonly string RegexPattern = @"(([0-9]){2}:){3}([0-9]){2}";
 
     /// <summary>
-    /// The timecode hour position, based on the framerate.
+    /// The timecode hour position, based on the framerate and total frames.
     /// </summary>
     public int Hour { get; private set; }
     /// <summary>
-    /// The timecode minute position, based on the framerate.
+    /// The timecode hour position, based on the framerate and total frames.
     /// </summary>
     public int Minute { get; private set; }
     /// <summary>
-    /// The timecode second position, based on the framerate.
+    /// The timecode hour position, based on the framerate and total frames.
     /// </summary>
     public int Second { get; private set; }
     /// <summary>
-    /// The timecode frame position, based on the framerate after hours,
-    /// minutes and seconds have been subtracted from the total frames.
+    /// The timecode frame position, based on the framerate and total frames.
     /// </summary>
     public int Frame { get; private set; }
 
@@ -52,7 +51,7 @@ namespace timecode
     }
 
     /// <summary>
-    /// Creates a new Timecode object.
+    /// Creates a new Timecode object at 00:00:00:00.
     /// </summary>
     /// <param name="framerate">The timecode framerate.</param>
     public Timecode(Framerate framerate)
@@ -68,7 +67,7 @@ namespace timecode
     /// <summary>
     /// Creates a new Timecode object.
     /// </summary>
-    /// <param name="totalFrames">The total amount of frames.</param>
+    /// <param name="totalFrames">The timecodes total amount of frames.</param>
     /// <param name="framerate">The timecode framerate.</param>
     public Timecode(int totalFrames, Framerate framerate)
     {
@@ -118,9 +117,12 @@ namespace timecode
     }
 
     /// <summary>
-    /// Adds hours to the timecode. Negative numbers removes hours from the timecode.
+    /// Adds hours to the timecode. 
+    /// <br/><br/>
+    /// Positive integer values add hours, 
+    /// while negative values remove hours.
     /// </summary>
-    /// <param name="hours">Number of hours to add to the timecode.</param>
+    /// <param name="hours">Number of hours to add or remove.</param>
     public void AddHours(int hours)
     {
       Hour += hours;
@@ -128,7 +130,10 @@ namespace timecode
     }
 
     /// <summary>
-    /// Adds minutes to the timecode. Negative numbers removes minutes from the timecode.
+    /// Adds minutes to the timecode.
+    /// <br/><br/>
+    /// Positive integer values add minutes, 
+    /// while negative values remove minutes.
     /// </summary>
     /// <param name="minutes">Number of minutes to add to the timecode.</param>
     /// <exception cref="NotImplementedException"></exception>
@@ -157,7 +162,10 @@ namespace timecode
     }
 
     /// <summary>
-    /// Adds seconds to the timecode. Negative numbers removes seconds from the timecode.
+    /// Adds seconds to the timecode. 
+    /// <br/><br/>
+    /// Positive integer values add seconds, 
+    /// while negative values remove seconds.
     /// </summary>
     /// <param name="seconds">Number of seconds to add to the timecode.</param>
     public void AddSeconds(int seconds)
@@ -199,7 +207,10 @@ namespace timecode
     }
 
     /// <summary>
-    /// Adds frames to the timecode. Negative numbers removes seconds from the timecode.
+    /// Adds frames to the timecode.
+    /// <br/><br/>
+    /// Positive integer values add frames, 
+    /// while negative values remove frames.
     /// </summary>
     /// <param name="frames">Number of frames to add to the timecode.</param>
     public void AddFrames(int frames)
@@ -209,9 +220,9 @@ namespace timecode
     }
 
     /// <summary>
-    /// Converts the Timecode to the target framerate.
+    /// Converts the timecode object to the target framerate.
     /// </summary>
-    /// <param name="targetFramerate"></param>
+    /// <param name="targetFramerate">The target framerate.</param>
     public void ConvertFramerate(Framerate targetFramerate)
     {
       Framerate = targetFramerate;
@@ -224,6 +235,10 @@ namespace timecode
     /// <returns>A string representation of a number value in the format of ex: "09".</returns>
     private string ZeroPadding(int num) => num < 10 ? $"0{num}" : num.ToString();
 
+    /// <summary>
+    /// Calculates and sets the TotalFrames property based on Hour, 
+    /// Minute, Second, Frame and Framerate properties.
+    /// </summary>
     private void UpdateTotalFrames()
     {
       if (Framerate == Framerate.fps29_97_DF || Framerate == Framerate.fps59_94_DF)
@@ -236,6 +251,10 @@ namespace timecode
       }
     }
 
+    /// <summary>
+    /// Calculates and sets the Hour, Minute, Second, Frame based 
+    /// on the TotalFrames and Framerate properties.
+    /// </summary>
     private void UpdateHoursMinutesSecondsFrames()
     {
       if (Framerate == Framerate.fps29_97_DF || Framerate == Framerate.fps59_94_DF)
