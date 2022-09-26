@@ -4,6 +4,32 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <PackageProjectUrl></PackageProjectUrl>
+    <Title>Dotnet Timecode</Title>
+    <Description>Dotnet Timecode is a single class C# library built to create an API for working with SMPTE Timecodes defined by the Society of Motion Picture and Television Engineers in the SMPTE 12M specification.</Description>
+    <Copyright>Copyright © 2022 Rasmus Broborg</Copyright>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>Rasmus Broborg</Authors>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Product>DotnetTimecode</Product>
+    <RepositoryUrl>https://github.com/RasmusBroborg/dotnet-timecode</RepositoryUrl>
+    <PackageTags>Timecode, SMPTE, Framerate</PackageTags>
+    <NeutralLanguage>en-001</NeutralLanguage>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageReleaseNotes>Inital release.</PackageReleaseNotes>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\..\LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>
