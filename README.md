@@ -2,7 +2,7 @@
 
 Dotnet Timecode is a single class c# library built to create an API for working with SMPTE Timecodes defined by the Society of Motion Picture and Television Engineers in the SMPTE 12M specification.
 
-The library allows the user to construct timecode objects, manipulate timecode values, and convert between the most common framerates, including drop frame timecodes such as 29.97DF and 59.95DF.
+The library allows the user to construct timecode objects, manipulate timecode values, and convert between the most common framerates, including drop frame framerates such as 29.97DF and 59.95DF.
 
 ## How do I get started?
 
