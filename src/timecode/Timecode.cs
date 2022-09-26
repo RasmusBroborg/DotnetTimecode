@@ -34,12 +34,12 @@ namespace timecode
     /// <summary>
     /// The timecodes total amount of frames.
     /// </summary>
-    public int TotalFrames { get; set; }
+    public int TotalFrames { get; private set; }
 
     /// <summary>
     /// The timecode framerate.
     /// </summary>
-    public Framerate Framerate { get; set; }
+    public Framerate Framerate { get; private set; }
 
     /// <summary>
     /// Returns the timecode as a string formatted hh:mm:ss:ff. 
@@ -74,7 +74,7 @@ namespace timecode
     {
       TotalFrames = totalFrames;
       Framerate = framerate;
-      SetTimeCodeValues();
+      UpdateHoursMinutesSecondsFrames();
     }
 
     /// <summary>
@@ -93,14 +93,7 @@ namespace timecode
       Frame = frame;
       Framerate = framerate;
 
-      if (Framerate == Framerate.fps29_97_DF || Framerate == Framerate.fps59_94_DF)
-      {
-        SetTotalFramesUsingDropFrames(Hour, Minute, Second, Frame);
-      }
-      else
-      {
-        SetTotalFrames(Hour, Minute, Second, Frame);
-      }
+      UpdateTotalFrames();
     }
 
     /// <summary>
@@ -121,6 +114,118 @@ namespace timecode
       Frame = Convert.ToInt32(hhmmssff[3]);
       Framerate = framerate;
 
+      UpdateTotalFrames();
+    }
+
+    /// <summary>
+    /// Adds hours to the timecode. Negative numbers removes hours from the timecode.
+    /// </summary>
+    /// <param name="hours">Number of hours to add to the timecode.</param>
+    public void AddHours(int hours)
+    {
+      Hour += hours;
+      UpdateTotalFrames();
+    }
+
+    /// <summary>
+    /// Adds minutes to the timecode. Negative numbers removes minutes from the timecode.
+    /// </summary>
+    /// <param name="minutes">Number of minutes to add to the timecode.</param>
+    /// <exception cref="NotImplementedException"></exception>
+    public void AddMinutes(int minutes)
+    {
+      int hoursToAdd = minutes / 60;
+      int minutesToAdd = minutes % 60;
+
+      int totMin = Minute + minutesToAdd;
+
+      if (totMin < 0)
+      {
+        hoursToAdd--;
+        minutesToAdd = 60 + minutesToAdd;
+      }
+      else if (totMin >= 60)
+      {
+        hoursToAdd++;
+        minutesToAdd = minutesToAdd - 60;
+      }
+
+      Hour += hoursToAdd;
+      Minute += minutesToAdd;
+
+      UpdateTotalFrames();
+    }
+
+    /// <summary>
+    /// Adds seconds to the timecode. Negative numbers removes seconds from the timecode.
+    /// </summary>
+    /// <param name="seconds">Number of seconds to add to the timecode.</param>
+    public void AddSeconds(int seconds)
+    {
+      int hoursToAdd = seconds / 60 / 60;
+      int secondsRemainingAfterHoursRemoved = seconds % (60 * 2);
+      int minutesToAdd = secondsRemainingAfterHoursRemoved / 60;
+      int secondsToAdd = secondsRemainingAfterHoursRemoved % 60;
+
+      int totSec = Second + secondsToAdd;
+      if (totSec < 0)
+      {
+        minutesToAdd--;
+        secondsToAdd = 60 + secondsToAdd;
+      }
+      else if (totSec >= 60)
+      {
+        minutesToAdd++;
+        secondsToAdd = secondsToAdd - 60;
+      }
+
+      int totMin = Minute + minutesToAdd;
+      if (totMin < 0)
+      {
+        hoursToAdd--;
+        minutesToAdd = 60 + minutesToAdd;
+      }
+      else if (totMin >= 60)
+      {
+        hoursToAdd++;
+        minutesToAdd = minutesToAdd - 60;
+      }
+
+      Second += secondsToAdd;
+      Minute += minutesToAdd;
+      Hour += hoursToAdd;
+
+      UpdateTotalFrames();
+    }
+
+    /// <summary>
+    /// Adds frames to the timecode. Negative numbers removes seconds from the timecode.
+    /// </summary>
+    /// <param name="frames">Number of frames to add to the timecode.</param>
+    public void AddFrames(int frames)
+    {
+      TotalFrames += frames;
+      UpdateHoursMinutesSecondsFrames();
+    }
+
+    /// <summary>
+    /// Converts the Timecode to the target framerate.
+    /// </summary>
+    /// <param name="targetFramerate"></param>
+    public void ConvertFramerate(Framerate targetFramerate)
+    {
+      Framerate = targetFramerate;
+      UpdateHoursMinutesSecondsFrames();
+    }
+
+    /// <summary>
+    /// Pads the first number position with a 0 if the number is less than two positions long.
+    /// </summary>
+    /// <returns>A string representation of a number value in the format of ex: "09".</returns>
+    private string ZeroPadding(int num) => num < 10 ? $"0{num}" : num.ToString();
+
+    private void UpdateTotalFrames()
+    {
       if (Framerate == Framerate.fps29_97_DF || Framerate == Framerate.fps59_94_DF)
       {
         SetTotalFramesUsingDropFrames(Hour, Minute, Second, Frame);
@@ -131,54 +236,7 @@ namespace timecode
       }
     }
 
-    /// <summary>
-    /// Adds hours to the timecode. Negative numbers removes hours from the timecode.
-    /// </summary>
-    /// <param name="hours">Number of hours to add to the timecode.</param>
-    public void AddHours(int hours)
-    {
-      throw new NotImplementedException();
-      SetTimeCodeValues();
-    }
-
-    /// <summary>
-    /// Adds minutes to the timecode. Negative numbers removes minutes from the timecode.
-    /// </summary>
-    /// <param name="minutes">Number of minutes to add to the timecode.</param>
-    /// <exception cref="NotImplementedException"></exception>
-    public void AddMinutes(int minutes)
-    {
-      throw new NotImplementedException();
-      SetTimeCodeValues();
-    }
-
-    /// <summary>
-    /// Adds seconds to the timecode. Negative numbers removes seconds from the timecode.
-    /// </summary>
-    /// <param name="seconds">Number of seconds to add to the timecode.</param>
-    public void AddSeconds(int seconds)
-    {
-      throw new NotImplementedException();
-      SetTimeCodeValues();
-    }
-
-    /// <summary>
-    /// Adds frames to the timecode. Negative numbers removes seconds from the timecode.
-    /// </summary>
-    /// <param name="frames">Number of frames to add to the timecode.</param>
-    public void AddFrames(int frames)
-    {
-      throw new NotImplementedException();
-      SetTimeCodeValues();
-    }
-
-    /// <summary>
-    /// Pads the first number position with a 0 if the number is less than two positions long.
-    /// </summary>
-    /// <returns>A string representation of a number value in the format of ex: "09".</returns>
-    private string ZeroPadding(int num) => num < 10 ? $"0{num}" : num.ToString();
-
-    private void SetTimeCodeValues()
+    private void UpdateHoursMinutesSecondsFrames()
     {
       if (Framerate == Framerate.fps29_97_DF || Framerate == Framerate.fps59_94_DF)
       {
