@@ -134,11 +134,24 @@ namespace timecode
     /// <exception cref="NotImplementedException"></exception>
     public void AddMinutes(int minutes)
     {
-      int div = minutes / 60;
-      int mod = minutes % 60;
+      int hoursToAdd = minutes / 60;
+      int minutesToAdd = minutes % 60;
 
-      Hour = Hour += div;
-      Minute = Minute += mod;
+      int totMin = Minute + minutesToAdd;
+
+      if (totMin < 0)
+      {
+        hoursToAdd--;
+        minutesToAdd = 60 + minutesToAdd;
+      }
+      else if (totMin >= 60)
+      {
+        hoursToAdd++;
+        minutesToAdd = minutesToAdd - 60;
+      }
+
+      Hour += hoursToAdd;
+      Minute += minutesToAdd;
 
       UpdateTotalFrames();
     }

@@ -106,7 +106,7 @@ namespace timecode.test
     }
 
     [Fact]
-    public void Add_Minutes_To_Timecode()
+    public void Add_61_Minutes_To_Timecode()
     {
       var sut = new Timecode("10:00:00:00", Enums.Framerate.fps23_976);
       sut.AddMinutes(61);
@@ -114,11 +114,27 @@ namespace timecode.test
     }
 
     [Fact]
-    public void Remove_Minutes_From_Timecode()
+    public void Remove_60_Minutes_From_Timecode()
+    {
+      var sut = new Timecode("10:00:00:00", Enums.Framerate.fps23_976);
+      sut.AddMinutes(-60);
+      sut.ToString().Should().Be("09:00:00:00");
+    }
+
+    [Fact]
+    public void Remove_61_Minutes_From_Timecode()
     {
       var sut = new Timecode("10:00:00:00", Enums.Framerate.fps23_976);
       sut.AddMinutes(-61);
-      sut.ToString().Should().Be("09:57:59:00");
+      sut.ToString().Should().Be("08:59:00:00");
+    }
+
+    [Fact]
+    public void Remove_119_Minutes_From_Timecode()
+    {
+      var sut = new Timecode("10:00:00:00", Enums.Framerate.fps23_976);
+      sut.AddMinutes(-119);
+      sut.ToString().Should().Be("08:01:00:00");
     }
   }
 }
