@@ -162,6 +162,39 @@ namespace timecode
     /// <param name="seconds">Number of seconds to add to the timecode.</param>
     public void AddSeconds(int seconds)
     {
+      int hoursToAdd = seconds / 60 / 60;
+      int secondsRemainingAfterHoursRemoved = seconds % (60 * 2);
+      int minutesToAdd = secondsRemainingAfterHoursRemoved / 60;
+      int secondsToAdd = secondsRemainingAfterHoursRemoved % 60;
+
+      int totSec = Second + secondsToAdd;
+      if (totSec < 0)
+      {
+        minutesToAdd--;
+        secondsToAdd = 60 + secondsToAdd;
+      }
+      else if (totSec >= 60)
+      {
+        minutesToAdd++;
+        secondsToAdd = secondsToAdd - 60;
+      }
+
+      int totMin = Minute + minutesToAdd;
+      if (totMin < 0)
+      {
+        hoursToAdd--;
+        minutesToAdd = 60 + minutesToAdd;
+      }
+      else if (totMin >= 60)
+      {
+        hoursToAdd++;
+        minutesToAdd = minutesToAdd - 60;
+      }
+
+      Second += secondsToAdd;
+      Minute += minutesToAdd;
+      Hour += hoursToAdd;
+
       UpdateTotalFrames();
     }
 
