@@ -136,5 +136,21 @@ namespace timecode.test
       sut.AddMinutes(-119);
       sut.ToString().Should().Be("08:01:00:00");
     }
+
+    [Fact]
+    public void Add_1_Hour_To_Timecode()
+    {
+      var sut = new Timecode("10:00:00:00", Enums.Framerate.fps23_976);
+      sut.AddHours(1);
+      sut.ToString().Should().Be("11:00:00:00");
+    }
+
+    [Fact]
+    public void Remove_1_Hour_From_Timecode()
+    {
+      var sut = new Timecode("10:00:00:00", Enums.Framerate.fps23_976);
+      sut.AddHours(-1);
+      sut.ToString().Should().Be("09:00:00:00");
+    }
   }
 }

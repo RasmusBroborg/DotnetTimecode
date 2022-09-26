@@ -123,7 +123,7 @@ namespace timecode
     /// <param name="hours">Number of hours to add to the timecode.</param>
     public void AddHours(int hours)
     {
-      throw new NotImplementedException();
+      Hour += hours;
       UpdateTotalFrames();
     }
 
