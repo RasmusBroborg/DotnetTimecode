@@ -6,6 +6,15 @@ The library allows the user to construct timecode objects, manipulate timecode v
 
 ## How do I get started?
 
+Install through Package Manager
+```
+NuGet\Install-Package timecode -Version 1.0.0
+```
+or .NET CLI
+```
+dotnet add package timecode --version 1.0.0
+```
+
 Add a reference to the library, then simply construct your objects.
 
 Examples:
