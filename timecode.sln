@@ -5,7 +5,7 @@ VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EE78D701-73AC-4762-BBE2-8B3766654F4D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "timecode", "src\timecode\timecode.csproj", "{E32A2F67-B662-4444-B051-DADC73CA6AC9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetTimecode", "src\timecode\DotnetTimecode.csproj", "{E32A2F67-B662-4444-B051-DADC73CA6AC9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{9F111D40-5816-4736-A59B-5B710998D0E3}"
 EndProject

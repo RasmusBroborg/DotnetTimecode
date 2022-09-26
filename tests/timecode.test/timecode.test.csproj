@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\timecode\timecode.csproj" />
+    <ProjectReference Include="..\..\src\timecode\DotnetTimecode.csproj" />
   </ItemGroup>
 
 </Project>
