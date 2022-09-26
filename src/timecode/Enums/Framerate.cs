@@ -1,4 +1,4 @@
-﻿namespace timecode.Enums
+﻿namespace DotnetTimecode.Enums
 {
   public enum Framerate
   {

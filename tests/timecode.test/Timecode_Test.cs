@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 using FluentAssertions;
 
-namespace timecode.test
+namespace DotnetTimecode.test
 {
   public class Timecode_Test
   {

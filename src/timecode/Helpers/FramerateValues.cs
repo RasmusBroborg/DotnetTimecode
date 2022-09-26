@@ -1,6 +1,6 @@
-﻿using timecode.Enums;
+﻿using DotnetTimecode.Enums;
 
-namespace timecode.Helpers
+namespace DotnetTimecode.Helpers
 {
   internal static class FramerateValues
   {
