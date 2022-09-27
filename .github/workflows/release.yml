@@ -22,7 +22,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+
     - name: Get Build Version
       run: |
         Import-Module .\build\GetBuildVersion.psm1
@@ -39,11 +43,6 @@ jobs:
 
     - name: Restore nuget dependencies
       run: nuget restore $SOLUTION
-
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v2
-      with:
-        dotnet-version: 6.0.x
 
     - name: Build
       run: dotnet build $SOLUTION --configuration $BUILD_CONFIG -p:Version=$BUILD_VERSION --no-restore
