@@ -4,6 +4,12 @@ Dotnet Timecode is a single class c# library built to create an API for working 
 
 The library allows the user to construct timecode objects, manipulate timecode values, and convert between the most common framerates, including drop frame framerates such as 29.97DF and 59.95DF.
 
+## Build Status
+
+| Build | Status | Current Version |
+| ------ | ------ | ------ |
+| GitHub Actions | [![CI](https://github.com/RasmusBroborg/dotnet-timecode/actions/workflows/ci.yml/badge.svg)](https://github.com/RasmusBroborg/dotnet-timecode/actions/workflows/ci.yml) | [![NuGet](https://img.shields.io/nuget/v/DotnetTimecode.svg)](https://www.nuget.org/packages/DotnetTimecode/) |
+
 ## How do I get started?
 
 Get the latest nuget package using the dotnet CLI
@@ -20,6 +26,7 @@ Add a reference to the library, then simply construct your objects.
 Examples:
 ```csharp
 using DotnetTimecode;
+using DotnetTimecode.Enums;
 
 var foo = new Timecode(Framerate.fps30);
 var bar = new Timecode(10, 00, 00, 00, Framerate.fps59_94_DF);
