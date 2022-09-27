@@ -1,14 +1,9 @@
 ## What is Dotnet Timecode?
+[![CI](https://github.com/RasmusBroborg/dotnet-timecode/actions/workflows/ci.yml/badge.svg)](https://github.com/RasmusBroborg/dotnet-timecode/actions/workflows/ci.yml) [![NuGet](https://img.shields.io/nuget/v/DotnetTimecode.svg)](https://www.nuget.org/packages/DotnetTimecode/)
 
 Dotnet Timecode is a single class c# library built to create an API for working with SMPTE Timecodes defined by the Society of Motion Picture and Television Engineers in the SMPTE 12M specification.
 
 The library allows the user to construct timecode objects, manipulate timecode values, and convert between the most common framerates, including drop frame framerates such as 29.97DF and 59.95DF.
-
-## Build Status
-
-| Build | Status | Current Version |
-| ------ | ------ | ------ |
-| GitHub Actions | [![CI](https://github.com/RasmusBroborg/dotnet-timecode/actions/workflows/ci.yml/badge.svg)](https://github.com/RasmusBroborg/dotnet-timecode/actions/workflows/ci.yml) | [![NuGet](https://img.shields.io/nuget/v/DotnetTimecode.svg)](https://www.nuget.org/packages/DotnetTimecode/) |
 
 ## How do I get started?
 
