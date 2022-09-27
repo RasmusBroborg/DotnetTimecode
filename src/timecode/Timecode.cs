@@ -1,9 +1,9 @@
 ﻿using System.Text.RegularExpressions;
 
-using timecode.Enums;
-using timecode.Helpers;
+using DotnetTimecode.Enums;
+using DotnetTimecode.Helpers;
 
-namespace timecode
+namespace DotnetTimecode
 {
   public class Timecode
   {
