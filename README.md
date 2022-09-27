@@ -1,4 +1,4 @@
-## What is dotnet-timecode?
+## What is Dotnet Timecode?
 
 Dotnet Timecode is a single class c# library built to create an API for working with SMPTE Timecodes defined by the Society of Motion Picture and Television Engineers in the SMPTE 12M specification.
 
@@ -6,10 +6,21 @@ The library allows the user to construct timecode objects, manipulate timecode v
 
 ## How do I get started?
 
+Get the latest nuget package using the dotnet CLI
+```
+dotnet add package DotnetTimecode
+```
+or using the Nuget Package Manager
+```
+Install-Package DotnetTimecode
+```
+
 Add a reference to the library, then simply construct your objects.
 
 Examples:
 ```csharp
+using DotnetTimecode;
+
 var foo = new Timecode(Framerate.fps30);
 var bar = new Timecode(10, 00, 00, 00, Framerate.fps59_94_DF);
 var baz = new Timecode("10:00:00:00", Framerate.fps24);
