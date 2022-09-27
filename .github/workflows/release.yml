@@ -32,9 +32,12 @@ jobs:
       shell: pwsh
 
     - name: Setup NuGet
-      uses: NuGet/setup-nuget@v6.3.0.131
+      uses: nuget/setup-nuget@v1
+      with:
+        nuget-api-key: ${{ secrets.NuGetAPIKey }}
+        nuget-version: '6.x'
 
-    - name: Restore dependencies
+    - name: Restore nuget dependencies
       run: nuget restore $SOLUTION
 
     - name: Setup .NET
