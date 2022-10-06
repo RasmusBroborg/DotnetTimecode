@@ -38,6 +38,7 @@ baz.ConvertFramerate(Framerate.fps25).ToString(); // "09:36:00:00"
 
 Feel free to either add issues or create a pull requests through forks.
 Use appropriate issue-labels and imperative style commit messages.
+[Contributing](CONTRIBUTING.md)
 
 ## License, etc.
 
