@@ -43,7 +43,7 @@ Timecode(int hour, int minute, int second, int frame, Enums.Framerate framerate)
 Timecode(string timecode, Enums.Framerate framerate);
 ```
 
-### Object Methods
+### Methods
 ```
 string timecodeString = timecodeObj.ToString();
 timecodeObj.AddHours(int hours);
