@@ -34,6 +34,36 @@ bar.AddMinutes(-61).ToString(); // "08:59:00:00"
 baz.ConvertFramerate(Framerate.fps25).ToString(); // "09:36:00:00"
 ```
 
+## Public endpoints
+
+### Constructors
+```
+Timecode(Enums.Framerate framerate);
+Timecode(int hour, int minute, int second, int frame, Enums.Framerate framerate);
+Timecode(string timecode, Enums.Framerate framerate);
+```
+
+### Object Methods
+```
+string timecodeString = timecodeObj.ToString();
+timecodeObj.AddHours(int hours);
+timecodeObj.AddMinutes(int minutes);
+timecodeObj.AddSeconds(int seconds);
+timecodeObj.AddFrames(int frames);
+timecodeObj.ConvertFramerate(Enums.Framerate targetFramerate);
+```
+
+### Properties
+```
+int hour = timecodeObj.Hour;
+int minute = timecodeObj.Minute;
+int second = timecodeObj.Second;
+int frame = timecodeObj.Frame;
+int totalFrames = timecodeObj.TotalFrames;
+Enums.Framerate framerate = timecodeObj.TotalFrames;
+string timecodeRegex = Timecode.RegexPattern;
+```
+
 ## Contributions
 
 Feel free to [contribute](CONTRIBUTING.md) by either adding an issues or creating pull requests through forks.
