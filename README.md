@@ -37,14 +37,14 @@ baz.ConvertFramerate(Framerate.fps25).ToString(); // "09:36:00:00"
 ## Public endpoints
 
 ### Constructors
-```
+```csharp
 Timecode(Enums.Framerate framerate);
 Timecode(int hour, int minute, int second, int frame, Enums.Framerate framerate);
 Timecode(string timecode, Enums.Framerate framerate);
 ```
 
 ### Methods
-```
+```csharp
 string timecodeString = timecodeObj.ToString();
 timecodeObj.AddHours(int hours);
 timecodeObj.AddMinutes(int minutes);
@@ -54,7 +54,7 @@ timecodeObj.ConvertFramerate(Enums.Framerate targetFramerate);
 ```
 
 ### Properties
-```
+```csharp
 int hour = timecodeObj.Hour;
 int minute = timecodeObj.Minute;
 int second = timecodeObj.Second;
