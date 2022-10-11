@@ -230,6 +230,146 @@ namespace DotnetTimecode
     }
 
     /// <summary>
+    /// Adds two Timecodes to each other
+    /// </summary>
+    /// <param name="left">The TimeCode to add to.</param>
+    /// <param name="right">The TimeCode that will be added.</param>
+    /// <returns>The result of TimeCode left plus right.</returns>
+    /// <exception cref="InvalidOperationException">Is Thrown when FrameRates are not equal.</exception>
+    public static Timecode operator +(Timecode left, Timecode right)
+    {
+      if (left.Framerate != right.Framerate)
+      {
+        throw new InvalidOperationException("It is not possible to calculate the addition between different framerates.");
+      }
+
+      left.AddHours(right.Hour);
+      left.AddMinutes(right.Minute);
+      left.AddSeconds(right.Second);
+
+      return left;
+    }
+
+    /// <summary>
+    /// Subtracts two Timecodes from each other
+    /// </summary>
+    /// <param name="left">The TimeCode to subtract from.</param>
+    /// <param name="right">The TimeCode that will be subtracted.</param>
+    /// <returns>The difference between TimeCode left and right.</returns>
+    /// <exception cref="InvalidOperationException">Is Thrown when FrameRates are not equal.</exception>
+    public static Timecode operator -(Timecode left, Timecode right)
+    {
+      if (left.Framerate != right.Framerate)
+      {
+        throw new InvalidOperationException("It is not possible to calculate the difference between different framerates.");
+      }
+
+      // Add negative amount of hours, minutes and seconds in order to subtract these properties. 
+      left.AddHours(-right.Hour);
+      left.AddMinutes(-right.Minute);
+      left.AddSeconds(-right.Second);
+
+      return left;
+    }
+
+    /// <summary>
+    /// Determines whether a timecode is smaller than another timecode.
+    /// </summary>
+    /// <param name="left">The timecode of which needs to be determined if its smaller</param>
+    /// <param name="right">The timecode will be compared to</param>
+    /// <returns>whether a timecode is smaller than another timecode</returns>
+    /// <exception cref="InvalidOperationException">Is Thrown when FrameRates are not equal.</exception>
+    public static bool operator <(Timecode left, Timecode right)
+    {
+      if (left.Framerate != right.Framerate)
+      {
+        throw new InvalidOperationException("It is not possible to calculate the difference between different framerates.");
+      }
+
+      if (left.Hour < right.Hour)
+      {
+        return true;
+      }
+      else if (left.Hour > right.Hour)
+      {
+        return false;
+      }
+
+      if (left.Minute < right.Minute)
+      {
+        return true;
+      }
+      else if (left.Minute > right.Minute)
+      {
+        return false;
+      }
+
+      if (left.Second < right.Second)
+      {
+        return true;
+      }
+
+      return false;
+    }
+
+    /// <summary>
+    /// Determines whether a timecode is larger than another timecode.
+    /// </summary>
+    /// <param name="left">The timecode of which needs to be determined if its larger</param>
+    /// <param name="right">The timecode will be compared to</param>
+    /// <returns>whether a timecode is larger than another timecode</returns>
+    /// <exception cref="InvalidOperationException">Is Thrown when FrameRates are not equal.</exception>
+    public static bool operator >(Timecode left, Timecode right)
+    {
+      if (left.Hour > right.Hour)
+      {
+        return true;
+      }
+      else if (left.Hour < right.Hour)
+      {
+        return false;
+      }
+
+      if (left.Minute > right.Minute)
+      {
+        return true;
+      }
+      else if (left.Minute < right.Minute)
+      {
+        return false;
+      }
+
+      if (left.Second > right.Second)
+      {
+        return true;
+      }
+
+      return false;
+    }
+    /// <summary>
+    /// Check whether timecodes are equal
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns>Whether timecodes are equal</returns>
+    public static bool operator ==(Timecode left, Timecode right)
+    {
+      return (left.Frame == right.Frame && left.Framerate == right.Framerate && left.TotalFrames == right.TotalFrames && left.Hour == right.Hour && left.Minute == right.Minute && left.Second == right.Second);
+    }
+
+    /// <summary>
+    /// Check whether timecodes are not equal
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns>Whether timecodes are not equal</returns>
+    public static bool operator !=(Timecode left, Timecode right)
+    {
+      return !(left.Frame == right.Frame && left.Framerate == right.Framerate && left.TotalFrames == right.TotalFrames && left.Hour == right.Hour && left.Minute == right.Minute && left.Second == right.Second);
+    }
+
+
+    /// <summary>
     /// Pads the first number position with a 0 if the number is less than two positions long.
     /// </summary>
     /// <returns>A string representation of a number value in the format of ex: "09".</returns>
