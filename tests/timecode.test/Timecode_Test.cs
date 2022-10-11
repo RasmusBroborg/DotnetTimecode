@@ -195,5 +195,132 @@ namespace DotnetTimecode.test
       sut.Match("10:a0:00:00").Success.Should().Be(false);
       sut.Match("10:000:00:00").Success.Should().Be(false);
     }
+
+    [Fact]
+    public void Timecode_Subtracts_ResultIsSubtracted()
+    {
+      // Arrange
+      var t1 = new Timecode(11, 11, 11, 0, Enums.Framerate.fps29_97_NDF);
+      var t2 = new Timecode(1, 1, 1, 0, Enums.Framerate.fps29_97_NDF);
+
+      // Act
+      var result = t1 - t2;
+
+      // Assert
+      Assert.Equal(10, result.Hour);
+      Assert.Equal(10, result.Minute);
+      Assert.Equal(10, result.Second);
+    }
+
+    [Fact]
+    public void Timecode_Add_AddsTimecode()
+    {
+      // Arrange
+      var t1 = new Timecode(11, 11, 11, 0, Enums.Framerate.fps29_97_NDF);
+      var t2 = new Timecode(1, 1, 1, 0, Enums.Framerate.fps29_97_NDF);
+
+      // Act
+      var result = t1 + t2;
+
+      // Assert
+      Assert.Equal(12, result.Hour);
+      Assert.Equal(12, result.Minute);
+      Assert.Equal(12, result.Second);
+    }
+
+    [Fact]
+    public void Timecode_Add_DifferentFrameRate_ThrowsException()
+    {
+      // Arrange
+      var t1 = new Timecode(11, 11, 11, 0, Enums.Framerate.fps29_97_NDF);
+      var t2 = new Timecode(1, 1, 1, 0, Enums.Framerate.fps50);
+
+      // Assert
+      Assert.Throws<InvalidOperationException>(() => t1 + t2);
+    }
+
+    [Fact]
+    public void Timecode_Equals_OtherTimeCode()
+    {
+      // Arrange
+      var t1 = new Timecode(11, 11, 11, 0, Enums.Framerate.fps29_97_NDF);
+      var t2 = t1;
+
+      // Act
+      var result = t1 == t2;
+
+      // Assert
+      Assert.True(result);
+    }
+
+    [Fact]
+    public void Timecode_NotEquals_OtherTimeCode()
+    {
+      // Arrange
+      var t1 = new Timecode(11, 11, 11, 0, Enums.Framerate.fps29_97_NDF);
+      var t2 = t1;
+
+      // Act
+      var result = t1 != t2;
+
+      // Assert
+      Assert.False(result);
+    }
+
+    [Fact]
+    public void Timecode_SmallerThan_OtherTimeCode()
+    {
+      // Arrange
+      var t1 = new Timecode(11, 11, 11, 0, Enums.Framerate.fps29_97_NDF);
+      var t2 = new Timecode(12, 12, 12, 0, Enums.Framerate.fps29_97_NDF);
+
+      // Act
+      var result = t1 < t2;
+
+      // Assert
+      Assert.True(result);
+    }
+
+    [Fact]
+    public void Timecode_NotSmallerThan_OtherTimeCode()
+    {
+      // Arrange
+      var t1 = new Timecode(11, 11, 11, 0, Enums.Framerate.fps29_97_NDF);
+      var t2 = new Timecode(10, 11, 12, 0, Enums.Framerate.fps29_97_NDF);
+
+      // Act
+      var result = t1 < t2;
+
+      // Assert
+      Assert.False(result);
+    }
+
+    [Fact]
+    public void Timecode_LargerThan_OtherTimeCode()
+    {
+      // Arrange
+      var t1 = new Timecode(11, 11, 11, 0, Enums.Framerate.fps29_97_NDF);
+      var t2 = new Timecode(10, 11, 12, 0, Enums.Framerate.fps29_97_NDF);
+
+      // Act
+      var result = t1 > t2;
+
+      // Assert
+      Assert.True(result);
+    }
+
+    [Fact]
+    public void Timecode_NotLargerThan_OtherTimeCode()
+    {
+      // Arrange
+      var t1 = new Timecode(11, 11, 11, 0, Enums.Framerate.fps29_97_NDF);
+      var t2 = new Timecode(12, 11, 12, 0, Enums.Framerate.fps29_97_NDF);
+
+      // Act
+      var result = t1 > t2;
+
+      // Assert
+      Assert.False(result);
+    }
   }
 }
