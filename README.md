@@ -46,10 +46,10 @@ Timecode(string timecode, Enums.Framerate framerate);
 ### Methods
 ```csharp
 string timecodeString = timecodeObj.ToString();
-timecodeObj.AddHours(int hours);
-timecodeObj.AddMinutes(int minutes);
-timecodeObj.AddSeconds(int seconds);
-timecodeObj.AddFrames(int frames);
+timecodeObj.AddHours(1);
+timecodeObj.AddMinutes(1);
+timecodeObj.AddSeconds(120);
+timecodeObj.AddFrames(1);
 timecodeObj.ConvertFramerate(Enums.Framerate targetFramerate);
 ```
 
@@ -60,7 +60,7 @@ int minute = timecodeObj.Minute;
 int second = timecodeObj.Second;
 int frame = timecodeObj.Frame;
 int totalFrames = timecodeObj.TotalFrames;
-Enums.Framerate framerate = timecodeObj.TotalFrames;
+Enums.Framerate framerate = timecodeObj.Framerate;
 string timecodeRegex = Timecode.RegexPattern;
 ```
 
