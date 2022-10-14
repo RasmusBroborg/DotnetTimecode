@@ -1,8 +1,17 @@
 # Contributing to Dotnet Timecode
 
-Feel free to either add issues or create a pull requests through forks. 
-Use imperative style commit messages, ex: <if implemented, this commit will >"add method for feature in example.cs".
 
-Check out the Issues tab for requests and ideas for future implementations or bugfixes.
+### How to Contribute to this repository
 
-Happy coding!
+- Run the project on your system and look for any bug fixes.
+- You can make any change, If it works and good for the app, it will be merged.
+
+
+---
+
+### NOTE
+
+- Make Sure you commit your changes in a new branch.
+- Make Sure you Give proper name to your files describing the addition.
+- Also Make Sure to put comments in your code wherever necessary.
+- While raising the PR, show the before and after of the changes in the Application.
