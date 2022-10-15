@@ -20,7 +20,7 @@ It is recommended to wait for confirmation from a code collaborator regarding if
 
 - Push your changes to your github fork: `git push`
 
-- Open a pull request into the main repository from the forked repository github page.
+- Open a pull request from the forked repository github page into the original repository.
 
 ### How to write commit messages.
 
@@ -30,7 +30,7 @@ Ex: git commit -m "Add feature x to y."
 
 ### How to handle pull requests
 
-Describe the implementation details suggested by the changes submitted in the pull request. All tests must pass and a code collaborator must review the changes. All requested changes made by a reviewer must be resolved before the pull request will be merged with the main repository.
+Describe what the submitted pull request aims to implement. A code collaborator must review the changes and approve the pull request for test workflows to run. All requested changes made by a reviewer must be resolved and all code tests must pass before the pull request will accepted and be merged with the main repository.
 
 ### Naming conventions
 
@@ -38,7 +38,7 @@ Follow the standard naming conventions for C# provided by the official .NET docu
 
 ### Tests
 
-All code alterations must be covered by tests. Pull requests submitting code without test coverage will not be accepted.
+All code alterations must be covered by tests. Pull requests submitting code changes without test coverage will not be accepted.
 
 ### Code comments
 
