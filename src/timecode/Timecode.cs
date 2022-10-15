@@ -280,7 +280,7 @@ namespace DotnetTimecode
       if (left.Framerate != right.Framerate)
       {
         throw new InvalidOperationException("It is not possible to calculate the difference between different framerates. \n" +
-          "Compare Totalframes between timecodes to see if the frame position is the same between timecodes with different framerates.");
+          "Use the TotalFrames property for comparison operations between timecodes instead.");
       }
       return left.TotalFrames < right.TotalFrames;
     }
@@ -297,7 +297,7 @@ namespace DotnetTimecode
       if (left.Framerate != right.Framerate)
       {
         throw new InvalidOperationException("It is not possible to calculate the difference between different framerates. \n" +
-          "Compare Totalframes between timecodes to see if the frame position is the same between timecodes with different framerates.");
+          "Use the TotalFrames property for comparison operations between timecodes instead.");
       }
       return left.TotalFrames > right.TotalFrames;
     }
@@ -314,7 +314,7 @@ namespace DotnetTimecode
       if (left.Framerate != right.Framerate)
       {
         throw new InvalidOperationException("It is not possible to calculate the difference between different framerates. \n" +
-          "Compare Totalframes between timecodes to see if the frame position is the same between timecodes with different framerates.");
+          "Use the TotalFrames property for comparison operations between timecodes instead.");
       }
       return left.TotalFrames <= right.TotalFrames;
     }
@@ -331,7 +331,7 @@ namespace DotnetTimecode
       if (left.Framerate != right.Framerate)
       {
         throw new InvalidOperationException("It is not possible to calculate the difference between different framerates. \n" +
-          "Compare Totalframes between timecodes to see if the frame position is the same between timecodes with different framerates.");
+          "Use the TotalFrames property for comparison operations between timecodes instead.");
       }
       return left.TotalFrames >= right.TotalFrames;
     }
