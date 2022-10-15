@@ -243,9 +243,7 @@ namespace DotnetTimecode
         throw new InvalidOperationException("It is not possible to calculate the addition between different framerates.");
       }
 
-      left.AddHours(right.Hour);
-      left.AddMinutes(right.Minute);
-      left.AddSeconds(right.Second);
+      left.AddFrames(right.TotalFrames);
 
       return left;
     }
@@ -265,9 +263,7 @@ namespace DotnetTimecode
       }
 
       // Add negative amount of hours, minutes and seconds in order to subtract these properties. 
-      left.AddHours(-right.Hour);
-      left.AddMinutes(-right.Minute);
-      left.AddSeconds(-right.Second);
+      left.AddFrames(-right.TotalFrames);
 
       return left;
     }
@@ -283,33 +279,10 @@ namespace DotnetTimecode
     {
       if (left.Framerate != right.Framerate)
       {
-        throw new InvalidOperationException("It is not possible to calculate the difference between different framerates.");
+        throw new InvalidOperationException("It is not possible to calculate the difference between different framerates. \n" +
+          "Compare Totalframes between timecodes to see if the frame position is the same between timecodes with different framerates.");
       }
-
-      if (left.Hour < right.Hour)
-      {
-        return true;
-      }
-      else if (left.Hour > right.Hour)
-      {
-        return false;
-      }
-
-      if (left.Minute < right.Minute)
-      {
-        return true;
-      }
-      else if (left.Minute > right.Minute)
-      {
-        return false;
-      }
-
-      if (left.Second < right.Second)
-      {
-        return true;
-      }
-
-      return false;
+      return left.TotalFrames < right.TotalFrames;
     }
 
     /// <summary>
@@ -321,30 +294,46 @@ namespace DotnetTimecode
     /// <exception cref="InvalidOperationException">Is Thrown when FrameRates are not equal.</exception>
     public static bool operator >(Timecode left, Timecode right)
     {
-      if (left.Hour > right.Hour)
+      if (left.Framerate != right.Framerate)
       {
-        return true;
+        throw new InvalidOperationException("It is not possible to calculate the difference between different framerates. \n" +
+          "Compare Totalframes between timecodes to see if the frame position is the same between timecodes with different framerates.");
       }
-      else if (left.Hour < right.Hour)
-      {
-        return false;
-      }
+      return left.TotalFrames > right.TotalFrames;
+    }
 
-      if (left.Minute > right.Minute)
+    /// <summary>
+    /// Determines whether a timecode is smaller or equal to another timecode.
+    /// </summary>
+    /// <param name="left">The timecode of which needs to be determined if its smaller.</param>
+    /// <param name="right">The timecode which the other will be compared to.</param>
+    /// <returns>True if the timecode is smaller than the compared timecode.</returns>
+    /// <exception cref="InvalidOperationException">Is Thrown when FrameRates are not equal.</exception>
+    public static bool operator <=(Timecode left, Timecode right)
+    {
+      if (left.Framerate != right.Framerate)
       {
-        return true;
+        throw new InvalidOperationException("It is not possible to calculate the difference between different framerates. \n" +
+          "Compare Totalframes between timecodes to see if the frame position is the same between timecodes with different framerates.");
       }
-      else if (left.Minute < right.Minute)
-      {
-        return false;
-      }
+      return left.TotalFrames <= right.TotalFrames;
+    }
 
-      if (left.Second > right.Second)
+    /// <summary>
+    /// Determines whether a timecode is larger or equal to another timecode.
+    /// </summary>
+    /// <param name="left">The timecode of which needs to be determined if its larger.</param>
+    /// <param name="right">The timecode which the other will be compared to.</param>
+    /// <returns>whether a timecode is larger than another timecode</returns>
+    /// <exception cref="InvalidOperationException">Is Thrown when FrameRates are not equal.</exception>
+    public static bool operator >=(Timecode left, Timecode right)
+    {
+      if (left.Framerate != right.Framerate)
       {
-        return true;
+        throw new InvalidOperationException("It is not possible to calculate the difference between different framerates. \n" +
+          "Compare Totalframes between timecodes to see if the frame position is the same between timecodes with different framerates.");
       }
-
-      return false;
+      return left.TotalFrames >= right.TotalFrames;
     }
 
     /// <summary>
@@ -355,13 +344,7 @@ namespace DotnetTimecode
     /// <returns>Whether timecodes are equal</returns>
     public static bool operator ==(Timecode left, Timecode right)
     {
-      return (
-        left.Frame == right.Frame
-        && left.Framerate == right.Framerate
-        && left.TotalFrames == right.TotalFrames
-        && left.Hour == right.Hour
-        && left.Minute == right.Minute
-        && left.Second == right.Second);
+      return left.TotalFrames == right.TotalFrames && left.Framerate == right.Framerate;
     }
 
     /// <summary>
@@ -372,12 +355,7 @@ namespace DotnetTimecode
     /// <returns>Whether timecodes are not equal</returns>
     public static bool operator !=(Timecode left, Timecode right)
     {
-      return !(left.Frame == right.Frame
-        && left.Framerate == right.Framerate
-        && left.TotalFrames == right.TotalFrames
-        && left.Hour == right.Hour
-        && left.Minute == right.Minute
-        && left.Second == right.Second);
+      return left.TotalFrames != right.TotalFrames && left.Framerate != right.Framerate;
     }
 
     /// <summary>

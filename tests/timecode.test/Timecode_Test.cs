@@ -322,5 +322,61 @@ namespace DotnetTimecode.test
       // Assert
       Assert.False(result);
     }
+
+    [Fact]
+    public void Timecode_LargerOrEqual_OtherTimeCode()
+    {
+      // Arrange
+      var t1 = new Timecode("10:00:00:00", Enums.Framerate.fps29_97_NDF);
+      var t2 = new Timecode("10:00:00:00", Enums.Framerate.fps29_97_NDF);
+
+      // Act
+      var result = t1 >= t2;
+
+      // Assert
+      Assert.True(result);
+    }
+
+    [Fact]
+    public void Timecode_LessOrEqual_OtherTimeCode()
+    {
+      // Arrange
+      var t1 = new Timecode("10:00:00:00", Enums.Framerate.fps29_97_NDF);
+      var t2 = new Timecode("10:00:00:00", Enums.Framerate.fps29_97_NDF);
+
+      // Act
+      var result = t1 <= t2;
+
+      // Assert
+      result.Should().BeTrue();
+    }
+
+    [Fact]
+    public void LessThan_Timecodes_With_Different_Framerates()
+    {
+      // Arrange
+      var t1 = new Timecode(10, 0, 0, 0, Enums.Framerate.fps25);
+      var t2 = new Timecode(10, 0, 0, 0, Enums.Framerate.fps24);
+
+      // Act
+      Action comparison = () => { var res = t1 > t2; };
+
+      // Assert
+      comparison.Should().Throw<InvalidOperationException>();
+    }
+
+    [Fact]
+    public void MoreThan_Timecodes_With_Different_Framerates()
+    {
+      // Arrange
+      var t1 = new Timecode(10, 0, 0, 0, Enums.Framerate.fps25);
+      var t2 = new Timecode(10, 0, 0, 0, Enums.Framerate.fps24);
+
+      // Act
+      Action comparison = () => { var res = t1 < t2; };
+
+      // Assert
+      comparison.Should().Throw<InvalidOperationException>();
+    }
   }
 }
