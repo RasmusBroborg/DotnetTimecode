@@ -1,5 +1,6 @@
 ## What is Dotnet Timecode?
-[![CI](https://github.com/RasmusBroborg/dotnet-timecode/actions/workflows/ci.yml/badge.svg)](https://github.com/RasmusBroborg/dotnet-timecode/actions/workflows/ci.yml) 
+
+[![CI](https://github.com/RasmusBroborg/dotnet-timecode/actions/workflows/ci.yml/badge.svg)](https://github.com/RasmusBroborg/dotnet-timecode/actions/workflows/ci.yml)
 [![NuGet](https://img.shields.io/nuget/v/DotnetTimecode.svg)](https://www.nuget.org/packages/DotnetTimecode/)
 [![Nuget](https://img.shields.io/nuget/dt/DotnetTimecode.svg)](https://nuget.org/packages/DotnetTimecode)
 
@@ -10,10 +11,13 @@ The library allows the user to construct timecode objects, manipulate timecode v
 ## How do I get started?
 
 Get the latest nuget package using the dotnet CLI
+
 ```
 dotnet add package DotnetTimecode
 ```
+
 or using the Nuget Package Manager
+
 ```
 Install-Package DotnetTimecode
 ```
@@ -21,6 +25,7 @@ Install-Package DotnetTimecode
 Add a reference to the library, then simply construct your objects.
 
 Examples:
+
 ```csharp
 using DotnetTimecode;
 using DotnetTimecode.Enums;
@@ -37,6 +42,7 @@ baz.ConvertFramerate(Framerate.fps25).ToString(); // "09:36:00:00"
 ## Public endpoints
 
 ### Constructors
+
 ```csharp
 Timecode(Enums.Framerate framerate);
 Timecode(int hour, int minute, int second, int frame, Enums.Framerate framerate);
@@ -44,6 +50,7 @@ Timecode(string timecode, Enums.Framerate framerate);
 ```
 
 ### Methods
+
 ```csharp
 string timecodeString = timecodeObj.ToString();
 timecodeObj.AddHours(1);
@@ -54,6 +61,7 @@ timecodeObj.ConvertFramerate(Enums.Framerate targetFramerate);
 ```
 
 ### Properties
+
 ```csharp
 int hour = timecodeObj.Hour;
 int minute = timecodeObj.Minute;
@@ -66,10 +74,14 @@ string timecodeRegex = Timecode.RegexPattern;
 
 ## Contributions
 
-Feel free to [contribute](CONTRIBUTING.md) by either adding an issues or creating pull requests through forks.
-Use appropriate issue-labels and imperative style commit messages. Check out the Issues tab for requests and ideas for future implementations or bugfixes.
-
+See [CONTRIBUTING.md](https://github.com/RasmusBroborg/dotnet-timecode/blob/master/CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](https://github.com/RasmusBroborg/dotnet-timecode/blob/master/CODE_OF_CONDUCT.md) for instructions on how to contribute to the project.
 
 ## License, etc.
 
 Dotnet Timecode is Copyright &copy; 2022 Rasmus Broborg and other contributors under the [MIT license](LICENSE.txt).
+
+## Contributors
+
+<a href="https://github.com/RasmusBroborg/dotnet-timecode/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=RasmusBroborg/dotnet-timecode&&max=817" />
+</a>
