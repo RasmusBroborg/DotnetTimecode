@@ -2,9 +2,9 @@
 
 ### How to request features or bugfixes
 
-Any feature or bug report can be requested through the use of an issue in the Issues tab. Describe the feature or bug in detail and provide examples if possible. If you would like to implement the change yourself, ask to be assigned to the issue in the issue comment section to avoid that multiple people work on the same issue.
+Any feature or bug report can be requested through the use of an issue in the [Issues](https://github.com/RasmusBroborg/dotnet-timecode/issues) tab. Describe the requested feature or bug in detail and provide examples if possible. If you would like to implement the change yourself, ask to be assigned to the issue in the comment section to avoid that multiple people work on the same issue.
 
-It is recommended to wait for confirmation from a code collaborator regarding if an issue should be implemented or not before starting any work, so that a discussion regarding the issue can be held in the issue comment section.
+It is recommended to wait for confirmation from a code collaborator regarding if an issue should be implemented or not before starting any work, so that a discussion regarding the issue can be held in the comment section.
 
 ### Github workflow
 
