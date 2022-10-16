@@ -472,6 +472,13 @@ namespace DotnetTimecode.test
       Action act = () => Timecode.AddFrames("", -50, Enums.Framerate.fps23_976);
       act.Should().Throw<ArgumentException>();
     }
+    
+    [Fact]
+    public void Convert_FrameRate_Using_Static_Method()
+    {
+      var sut = Timecode.ConvertFramerate("10:00:00:00", Enums.Framerate.fps23_976, Enums.Framerate.fps59_94_NDF);
+      sut.Should().Be("04:00:00:00");
+    }
 
     #endregion
 
