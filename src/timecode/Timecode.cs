@@ -129,6 +129,7 @@ namespace DotnetTimecode
       UpdateTotalFrames();
     }
 
+
     /// <summary>
     /// Adds minutes to the timecode.
     /// <br/><br/>
@@ -491,5 +492,72 @@ namespace DotnetTimecode
       int totalFrames = ((hourFrames * hours) + (minuteFrames * minutes) + (timeBase * seconds) + frames) - (dropFrames * (totalMinutes - (totalMinutes / 10)));
       TotalFrames = totalFrames;
     }
-  }
+
+    #region staticMethods
+
+    /// <summary>
+    /// Adds hours to the given time. 
+    /// <br/><br/>
+    /// Positive integer values add hours, 
+    /// while negative values remove hours.
+    /// </summary>
+    /// <param name="inputString">Time to update.</param>
+    /// <param name="hours">Number of hours to add or remove.</param>
+    /// <param name="framerate">The timecode framerate.Default rate is fps24</param>
+    public static string AddHours(string inputString, int hours, Framerate framerate = Framerate.fps24)
+    {
+      Timecode timecode = new Timecode(inputString, framerate);
+      timecode.AddHours(hours);
+      return timecode.ToString();
+    }
+
+    /// <summary>
+    /// Adds minutes to the given time. 
+    /// <br/><br/>
+    /// Positive integer values add minutes, 
+    /// while negative values remove minutes.
+    /// </summary>
+    /// <param name="inputString">Time to update.</param>
+    /// <param name="minutes">Number of minutes to add or remove.</param>
+    /// <param name="framerate">The timecode framerate.Default rate is fps24</param>
+    public static string AddMinutes(string inputString, int minutes, Framerate framerate = Framerate.fps24)
+    {
+      Timecode timecode = new Timecode(inputString, framerate);
+      timecode.AddMinutes(minutes);
+      return timecode.ToString();
+    }
+
+    /// <summary>
+    /// Adds seconds to the given time. 
+    /// <br/><br/>
+    /// Positive integer values add seconds, 
+    /// while negative values remove seconds.
+    /// </summary>
+    /// <param name="inputString">Time to update.</param>
+    /// <param name="seconds">Number of seconds to add or remove.</param>
+    /// <param name="framerate">The timecode framerate.Default rate is fps24</param>
+    public static string AddSeconds(string inputString, int seconds, Framerate framerate = Framerate.fps24)
+    {
+      Timecode timecode = new Timecode(inputString, framerate);
+      timecode.AddSeconds(seconds);
+      return timecode.ToString();
+    }
+
+    /// <summary>
+    /// Adds seconds to the given time. 
+    /// <br/><br/>
+    /// Positive integer values add frames, 
+    /// while negative values remove frames.
+    /// </summary>
+    /// <param name="inputString">Time to update.</param>
+    /// <param name="frames">Number of frames to add or remove.</param>
+    /// <param name="framerate">The timecode framerate.Default rate is fps24</param>
+    public static string AddFrames(string inputString, int frames, Framerate framerate = Framerate.fps24)
+    {
+      Timecode timecode = new Timecode(inputString, framerate);
+      timecode.AddFrames(frames);
+      return timecode.ToString();
+    }
+      #endregion
+    }
 }
