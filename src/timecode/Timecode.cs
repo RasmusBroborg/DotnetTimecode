@@ -540,6 +540,25 @@ namespace DotnetTimecode
       timecode.AddFrames(frames);
       return timecode.ToString();
     }
+    
+    /// <summary>
+    /// Converts a timecode string to a timecode string of a different framerate.
+    /// </summary>
+    /// <param name="originalTimecode">The original timecode, formatted "HH:MM:SS:FF" or "-HH:MM:SS:FF".</param>
+    /// <param name="originalFramerate">The original timecode framerate.</param>
+    /// <param name="destinationFramerate">The target framerate to convert to.</param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
+    public static string ConvertFramerate(string originalTimecode, Framerate originalFramerate, Framerate destinationFramerate)
+    {
+      // Validate the original timecode format
+      Regex tcRegex = new Regex(RegexPattern);
+      if (!tcRegex.IsMatch(originalTimecode))
+        throw new ArgumentException("Invalid timecode format.", nameof(originalTimecode));
+      Timecode timecode = new Timecode(originalTimecode, originalFramerate);
+      timecode.ConvertFramerate(destinationFramerate);
+      return timecode.ToString();
+    }
       #endregion
     }
 }
