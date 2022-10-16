@@ -1,4 +1,4 @@
-﻿
+
 using System.Text.RegularExpressions;
 
 using FluentAssertions;
@@ -64,6 +64,13 @@ namespace DotnetTimecode.test
     {
       var sut = new Timecode("10:00:00:00", Enums.Framerate.fps24);
       sut.TotalFrames.Should().Be(864000);
+    }
+
+    [Fact]
+    public void Construct_Using_Invalid_String_Format_Input()
+    {
+      Action act = () => new Timecode("-10:-01:-01:-01", Enums.Framerate.fps24);
+      act.Should().Throw<ArgumentException>();
     }
 
     [Fact]
@@ -377,6 +384,79 @@ namespace DotnetTimecode.test
 
       // Assert
       comparison.Should().Throw<InvalidOperationException>();
+    }
+
+    [Fact]
+    public void Negative_Timecodes_ToString()
+    {
+      // Arrange
+      var t1 = new Timecode(-10, 10, 10, 10, Enums.Framerate.fps25);
+      var t2 = new Timecode("-10:10:10:10", Enums.Framerate.fps25);
+
+      // Act
+      var expectedResult = "-10:10:10:10";
+      var t1Result = t1.ToString();
+      var t2Result = t2.ToString();
+
+      // Assert
+      t1Result.Should().Be(expectedResult);
+      t2Result.Should().Be(expectedResult);
+    }
+
+    [Fact]
+    public void Negative_Timecodes_Check_Addition_Overloading()
+    {
+      // Arrange
+      var t1 = new Timecode(10, 00, 00, 00, Enums.Framerate.fps25);
+      var t2 = new Timecode("-20:00:00:00", Enums.Framerate.fps25);
+
+      // Act
+      var expectedResult = "-10:00:00:00";
+      var timecodeAfterOperation = t1 + t2;
+      var result = timecodeAfterOperation.ToString();
+
+      // Assert
+      t1.ToString().Should().Be("10:00:00:00");
+      t2.ToString().Should().Be("-20:00:00:00");
+      result.Should().Be(expectedResult);
+    }
+
+    [Fact]
+    public void Negative_Timecodes_Check_Addition_Overloading_DropFrame()
+    {
+      // Arrange
+      var t1 = new Timecode(10, 00, 00, 00, Enums.Framerate.fps59_94_DF);
+      var t2 = new Timecode("-20:00:00:00", Enums.Framerate.fps59_94_DF);
+
+      // Act
+      var expectedResult = "-10:00:00:00";
+      var timecodeAfterOperation = t1 + t2;
+      var result = timecodeAfterOperation.ToString();
+
+      // Assert
+      t1.ToString().Should().Be("10:00:00:00");
+      t2.ToString().Should().Be("-20:00:00:00");
+      result.Should().Be(expectedResult);
+    }
+
+    [Fact]
+    public void Negative_Timecodes_ArithmeticOperations()
+    {
+      // Arrange
+      var timecode = new Timecode("-10:00:00:00", Enums.Framerate.fps25);
+
+      // Act
+      timecode.AddHours(8);
+      timecode.AddMinutes(60);
+      timecode.AddSeconds(3600);
+
+      // Assert
+      timecode.Hour.Should().Be(0);
+      timecode.Minute.Should().Be(0);
+      timecode.Second.Should().Be(0);
+      timecode.Frame.Should().Be(0);
+      timecode.TotalFrames.Should().Be(0);
+      timecode.Framerate.Should().Be(Enums.Framerate.fps25);
     }
   }
 }

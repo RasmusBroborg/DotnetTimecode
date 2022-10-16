@@ -1,17 +1,21 @@
-﻿using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 
 using DotnetTimecode.Enums;
 using DotnetTimecode.Helpers;
 
 namespace DotnetTimecode
 {
+#pragma warning disable CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
+#pragma warning disable CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
   public class Timecode
+#pragma warning restore CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
+#pragma warning restore CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
   {
     /// <summary>
     /// Regular expression pattern for a timecode. 
     /// Supports the format hh:mm:ss:ff.
     /// </summary>
-    public static readonly string RegexPattern = @"(([0-9]){2}:){3}([0-9]){2}";
+    public static readonly string RegexPattern = @"(-){0,1}(([0-9]){2}:){3}([0-9]){2}";
 
     /// <summary>
     /// The timecode hour position, based on the framerate and total frames.
@@ -242,10 +246,7 @@ namespace DotnetTimecode
       {
         throw new InvalidOperationException("It is not possible to calculate the addition between different framerates.");
       }
-
-      left.AddFrames(right.TotalFrames);
-
-      return left;
+      return new Timecode(left.TotalFrames + right.TotalFrames, left.Framerate);
     }
 
     /// <summary>
@@ -261,11 +262,7 @@ namespace DotnetTimecode
       {
         throw new InvalidOperationException("It is not possible to calculate the difference between different framerates.");
       }
-
-      // Add negative amount of hours, minutes and seconds in order to subtract these properties. 
-      left.AddFrames(-right.TotalFrames);
-
-      return left;
+      return new Timecode(left.TotalFrames - right.TotalFrames, left.Framerate);
     }
 
     /// <summary>
@@ -362,7 +359,7 @@ namespace DotnetTimecode
     /// Pads the first number position with a 0 if the number is less than two positions long.
     /// </summary>
     /// <returns>A string representation of a number value in the format of ex: "09".</returns>
-    private string ZeroPadding(int num) => num < 10 ? $"0{num}" : num.ToString();
+    private string ZeroPadding(int num) => Math.Abs(num) < 10 ? $"0{num}" : num.ToString();
 
     /// <summary>
     /// Calculates and sets the TotalFrames property based on Hour, 
@@ -402,16 +399,6 @@ namespace DotnetTimecode
 
       int timeBase = Convert.ToInt32(Math.Round(framerate));
 
-      int framesPerHour = timeBase * 60 * 60;
-      int framesPer24Hours = framesPerHour * 24;
-
-      while (totalFrames < 0)
-      {
-        totalFrames = totalFrames + framesPer24Hours;
-      }
-
-      totalFrames = totalFrames % framesPer24Hours;
-
       int remainingFrames = totalFrames;
 
       int hourFrames = timeBase * 60 * 60;
@@ -439,11 +426,6 @@ namespace DotnetTimecode
       int framesPer10Minutes = Convert.ToInt32(Math.Round(framerate * 60 * 10));
       int framesPerHour = Convert.ToInt32(Math.Round(framerate * 60 * 60));
       int framesPer24Hours = framesPerHour * 24;
-
-      while (totalFrames < 0)
-      {
-        totalFrames = framesPer24Hours + totalFrames;
-      }
 
       totalFrames = totalFrames % framesPer24Hours;
 
