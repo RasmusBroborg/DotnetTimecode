@@ -1,4 +1,4 @@
-﻿
+
 using System.Text.RegularExpressions;
 
 using FluentAssertions;
@@ -377,6 +377,43 @@ namespace DotnetTimecode.test
 
       // Assert
       comparison.Should().Throw<InvalidOperationException>();
+    }
+
+    [Fact]
+    public void Negative_Timecodes_ToString()
+    {
+      // Arrange
+      var t1 = new Timecode(-10, 10, 10, 10, Enums.Framerate.fps25);
+      var t2 = new Timecode("-10:10:10:10", Enums.Framerate.fps25);
+
+      // Act
+      var expectedResult = "-10:10:10:10";
+      var t1Result = t1.ToString();
+      var t2Result = t2.ToString();
+
+      // Assert
+      t1Result.Should().Be(expectedResult);
+      t2Result.Should().Be(expectedResult);
+    }
+
+    [Fact]
+    public void Negative_Timecodes_ArithmeticOperations()
+    {
+      // Arrange
+      var timecode = new Timecode("-10:00:00:00", Enums.Framerate.fps25);
+
+      // Act
+      timecode.AddHours(8);
+      timecode.AddMinutes(60);
+      timecode.AddSeconds(3600);
+
+      // Assert
+      timecode.Hour.Should().Be(0);
+      timecode.Minute.Should().Be(0);
+      timecode.Second.Should().Be(0);
+      timecode.Frame.Should().Be(0);
+      timecode.TotalFrames.Should().Be(0);
+      timecode.Framerate.Should().Be(Enums.Framerate.fps25);
     }
   }
 }
