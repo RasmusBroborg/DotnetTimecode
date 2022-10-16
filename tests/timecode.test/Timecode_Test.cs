@@ -1,4 +1,4 @@
-
+﻿
 using System.Text.RegularExpressions;
 
 using FluentAssertions;
@@ -472,7 +472,7 @@ namespace DotnetTimecode.test
       Action act = () => Timecode.AddFrames("", -50, Enums.Framerate.fps23_976);
       act.Should().Throw<ArgumentException>();
     }
-    
+
     [Fact]
     public void Convert_FrameRate_Using_Static_Method()
     {
@@ -481,7 +481,7 @@ namespace DotnetTimecode.test
     }
 
     #endregion
-
+    [Fact]
     public void Negative_Timecodes_ToString()
     {
       // Arrange

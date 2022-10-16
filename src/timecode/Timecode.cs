@@ -540,7 +540,7 @@ namespace DotnetTimecode
       timecode.AddFrames(frames);
       return timecode.ToString();
     }
-    
+
     /// <summary>
     /// Converts a timecode string to a timecode string of a different framerate.
     /// </summary>
@@ -559,6 +559,6 @@ namespace DotnetTimecode
       timecode.ConvertFramerate(destinationFramerate);
       return timecode.ToString();
     }
-      #endregion
-    }
+    #endregion
+  }
 }
