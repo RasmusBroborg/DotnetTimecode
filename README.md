@@ -76,7 +76,7 @@ string timecodeRegex = Timecode.RegexPattern;
 
 See [CONTRIBUTING.md](https://github.com/RasmusBroborg/dotnet-timecode/blob/master/CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](https://github.com/RasmusBroborg/dotnet-timecode/blob/master/CODE_OF_CONDUCT.md) for instructions on how to contribute to the project.
 
-## Contributors
+### Contributors
 
 <a href="https://github.com/RasmusBroborg/dotnet-timecode/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=RasmusBroborg/dotnet-timecode&&max=817" />
