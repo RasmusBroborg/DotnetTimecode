@@ -246,10 +246,7 @@ namespace DotnetTimecode
       {
         throw new InvalidOperationException("It is not possible to calculate the addition between different framerates.");
       }
-
-      left.AddFrames(right.TotalFrames);
-
-      return left;
+      return new Timecode(left.TotalFrames + right.TotalFrames, left.Framerate);
     }
 
     /// <summary>
@@ -265,11 +262,7 @@ namespace DotnetTimecode
       {
         throw new InvalidOperationException("It is not possible to calculate the difference between different framerates.");
       }
-
-      // Add negative amount of hours, minutes and seconds in order to subtract these properties. 
-      left.AddFrames(-right.TotalFrames);
-
-      return left;
+      return new Timecode(left.TotalFrames - right.TotalFrames, left.Framerate);
     }
 
     /// <summary>
@@ -406,16 +399,6 @@ namespace DotnetTimecode
 
       int timeBase = Convert.ToInt32(Math.Round(framerate));
 
-      int framesPerHour = timeBase * 60 * 60;
-      int framesPer24Hours = framesPerHour * 24;
-
-      while (totalFrames < 0)
-      {
-        totalFrames = totalFrames + framesPer24Hours;
-      }
-
-      totalFrames = totalFrames % framesPer24Hours;
-
       int remainingFrames = totalFrames;
 
       int hourFrames = timeBase * 60 * 60;
@@ -443,11 +426,6 @@ namespace DotnetTimecode
       int framesPer10Minutes = Convert.ToInt32(Math.Round(framerate * 60 * 10));
       int framesPerHour = Convert.ToInt32(Math.Round(framerate * 60 * 60));
       int framesPer24Hours = framesPerHour * 24;
-
-      while (totalFrames < 0)
-      {
-        totalFrames = framesPer24Hours + totalFrames;
-      }
 
       totalFrames = totalFrames % framesPer24Hours;
 
