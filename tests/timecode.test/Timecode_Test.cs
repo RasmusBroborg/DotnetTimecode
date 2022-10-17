@@ -197,7 +197,7 @@ namespace DotnetTimecode.test
     [Fact]
     public void Timecode_Regex_Works()
     {
-      var sut = new Regex(Timecode.RegexPattern);
+      var sut = new Regex(Timecode.TimecodeRegexPattern);
       sut.Match("10:00:00:00").Success.Should().Be(true);
       sut.Match("10:a0:00:00").Success.Should().Be(false);
       sut.Match("10:000:00:00").Success.Should().Be(false);
@@ -398,14 +398,14 @@ namespace DotnetTimecode.test
     [Fact]
     public void Remove_1_Hour_To_GivenInputTimeString()
     {
-      var sut = Timecode.AddHours("10:00:00:00", -1, Enums.Framerate.fps23_976);
+      var sut = Timecode.AddHours("10:00:00:00", -1);
       sut.Should().Be("09:00:00:00");
     }
 
     [Fact]
     public void throw_Exeception_When_InputString_Is_Invalid_While_Add_1_Hour()
     {
-      Action act = () => Timecode.AddHours("", -1, Enums.Framerate.fps23_976);
+      Action act = () => Timecode.AddHours("", -1);
       act.Should().Throw<ArgumentException>();
     }
 
@@ -420,14 +420,14 @@ namespace DotnetTimecode.test
 
     public void Remove_1_Minute_To_GivenInputTimeString()
     {
-      var sut = Timecode.AddMinutes("10:00:00:00", -1, Enums.Framerate.fps23_976);
+      var sut = Timecode.AddMinutes("10:00:00:00", -1);
       sut.Should().Be("09:59:00:00");
     }
 
     [Fact]
-    public void throw_Exeception_When_InputString_Is_Invalid_While_Add_1_Minute()
+    public void Throw_Exeception_When_InputString_Is_Invalid_While_Add_1_Minute()
     {
-      Action act = () => Timecode.AddMinutes("", -1, Enums.Framerate.fps23_976);
+      Action act = () => Timecode.AddMinutes("", -1);
       act.Should().Throw<ArgumentException>();
     }
 
@@ -441,14 +441,14 @@ namespace DotnetTimecode.test
     [Fact]
     public void Remove_1_Second_To_GivenInputTimeString()
     {
-      var sut = Timecode.AddSeconds("10:00:00:00", -1, Enums.Framerate.fps23_976);
+      var sut = Timecode.AddSeconds("10:00:00:00", -1);
       sut.Should().Be("09:59:59:00");
     }
 
     [Fact]
     public void throw_Exeception_When_InputString_Is_Invalid_While_Add_1_Second()
     {
-      Action act = () => Timecode.AddSeconds("", -1, Enums.Framerate.fps23_976);
+      Action act = () => Timecode.AddSeconds("", -1);
       act.Should().Throw<ArgumentException>();
     }
 
@@ -469,7 +469,7 @@ namespace DotnetTimecode.test
     [Fact]
     public void throw_Exeception_When_InputString_Is_Invalid_While_Add_Frame()
     {
-      Action act = () => Timecode.AddFrames("", -50, Enums.Framerate.fps23_976);
+      Action act = () => Timecode.AddFrames("", -50, Enums.Framerate.fps25);
       act.Should().Throw<ArgumentException>();
     }
 
