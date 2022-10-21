@@ -72,6 +72,26 @@ Enums.Framerate framerate = timecodeObj.Framerate;
 string timecodeRegex = Timecode.RegexPattern;
 ```
 
+### Operator Overloading
+
+```csharp
+
+var tc1 = new Timecode(1, 2, 20, 100, DotnetTimecode.Enums.Framerate.fps23_976);
+var tc2 = new Timecode(0, 22, 31, 100, DotnetTimecode.Enums.Framerate.fps23_976);
+//Unary operator +,-
+Console.WriteLine(tc1 + tc2); //01:24:59:08
+Console.WriteLine(tc1 - tc2); //00:39:49:00
+
+//Boolean operator <,>,<=,>=,==,!=
+Console.WriteLine(tc1 < tc2); // False
+Console.WriteLine(tc1 > tc2); // True
+Console.WriteLine(tc1 <= tc2); // False
+Console.WriteLine(tc1 >= tc2); // True
+Console.WriteLine(tc1 == tc2);// False
+Console.WriteLine(tc1 != tc2);// False
+
+```
+
 ## Contributions
 
 ### How to contribute to the project
