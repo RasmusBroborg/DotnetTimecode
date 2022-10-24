@@ -9,6 +9,7 @@
     <Description>Dotnet Timecode is a single class C# library built to create an API for working with SMPTE Timecodes defined by the Society of Motion Picture and Television Engineers in the SMPTE 12M specification.</Description>
     <Copyright>Copyright © 2022 Rasmus Broborg</Copyright>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Authors>Rasmus Broborg</Authors>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Product>DotnetTimecode</Product>
