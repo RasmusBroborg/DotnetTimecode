@@ -75,20 +75,16 @@ string timecodeRegex = Timecode.RegexPattern;
 ### Operator Overloading
 
 ```csharp
-
-var tc1 = new Timecode(1, 2, 20, 100, DotnetTimecode.Enums.Framerate.fps23_976);
-var tc2 = new Timecode(0, 22, 31, 100, DotnetTimecode.Enums.Framerate.fps23_976);
-
-
-Console.WriteLine(tc1 + tc2); //01:24:59:08
-Console.WriteLine(tc1 - tc2); //00:39:49:00
+var tc1 = new Timecode(10, 0, 0, 0, DotnetTimecode.Enums.Framerate.fps23_976);//10:00:00:00
+var tc2 = new Timecode(1, 0, 0, 0, DotnetTimecode.Enums.Framerate.fps23_976); //01:00:00:00
+Console.WriteLine(tc1 + tc2); //11:00:00:00
+Console.WriteLine(tc1 - tc2); //09:00:00:00
 Console.WriteLine(tc1 < tc2); // False
 Console.WriteLine(tc1 > tc2); // True
 Console.WriteLine(tc1 <= tc2); // False
 Console.WriteLine(tc1 >= tc2); // True
 Console.WriteLine(tc1 == tc2);// False
 Console.WriteLine(tc1 != tc2);// False
-
 ```
 
 ## Contributions
