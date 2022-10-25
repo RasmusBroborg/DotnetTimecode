@@ -15,9 +15,9 @@ namespace DotnetTimecode
 
     /// <summary>
     /// Regular expression pattern of a timecode following the format. 
-    /// Supports the format "HH:MM:SS:FF" and "-HH:MM:SS:FF".
+    /// Supports the format "HH:MM:SS:FF", "HH:MM:SS;FF", "-HH:MM:SS:FF", "-HH:MM:SS;FF".
     /// </summary>
-    public const string TimecodeRegexPattern = @"^(-){0,1}(([0-9]){2}:){3}([0-9]){2}$";
+    public const string TimecodeRegexPattern = @"^(-){0,1}(([0-9]){2}:){2}(([0-9]){2})(;|:)([0-9]){2}$";
 
     /// <summary> 
     /// The timecode hour position.
