@@ -63,11 +63,11 @@ timecodeObj.ConvertFramerate(Enums.Framerate targetFramerate);
 ### Static methods
 
 ```csharp
-Timecode.AddHours(string timecode, int hours);
-Timecode.AddMinutes(string timecode, int minutes);
-Timecode.AddSeconds(string timecode, int seconds);
-Timecode.AddFrames(string timecode, int frames);
-Timecode.ConvertFramerate(string timecode, Enums.Framerate originalFramerate, Enums.Framerate targetFramerate);
+string timecodeString = Timecode.AddHours(string timecode, int hours);
+string timecodeString = Timecode.AddMinutes(string timecode, int minutes);
+string timecodeString = Timecode.AddSeconds(string timecode, int seconds);
+string timecodeString = Timecode.AddFrames(string timecode, int frames);
+string timecodeString = Timecode.ConvertFramerate(string timecode, Enums.Framerate originalFramerate, Enums.Framerate targetFramerate);
 ```
 
 ### Object Properties
