@@ -79,7 +79,6 @@ int second = timecodeObj.Second;
 int frame = timecodeObj.Frame;
 int totalFrames = timecodeObj.TotalFrames;
 Enums.Framerate framerate = timecodeObj.Framerate;
-string timecodeRegex = Timecode.RegexPattern;
 ```
 
 ### Static Properties
