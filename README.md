@@ -1,3 +1,5 @@
+![Image of a non drop frame timecode.](https://github.com/RasmusBroborg/dotnet-timecode/blob/main/assets/DotnetTimecode_asset_2997NDF.png?raw=true)
+
 ## What is Dotnet Timecode?
 
 [![CI](https://github.com/RasmusBroborg/dotnet-timecode/actions/workflows/ci.yml/badge.svg)](https://github.com/RasmusBroborg/dotnet-timecode/actions/workflows/ci.yml)
