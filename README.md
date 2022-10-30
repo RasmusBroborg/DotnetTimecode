@@ -75,11 +75,11 @@ string timecodeRegex = Timecode.RegexPattern;
 ### Operator Overloading
 
 ```csharp
-var tc1 = new Timecode(10, 0, 0, 0, Enums.Framerate.fps23_976); //10:00:00:00
-var tc2 = new Timecode(1, 0, 0, 0, Enums.Framerate.fps23_976); //01:00:00:00
+var tc1 = new Timecode(10, 0, 0, 0, Enums.Framerate.fps23_976); // 10:00:00:00
+var tc2 = new Timecode(1, 0, 0, 0, Enums.Framerate.fps23_976); // 01:00:00:00
 
-tc1 + tc2;  //11:00:00:00
-tc1 - tc2;  //09:00:00:00
+tc1 + tc2;  // 11:00:00:00
+tc1 - tc2;  // 09:00:00:00
 tc1 < tc2;  // False
 tc1 > tc2;  // True
 tc1 <= tc2; // False
