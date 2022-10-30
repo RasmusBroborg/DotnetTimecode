@@ -37,7 +37,7 @@ var bar = new Timecode(10, 00, 00, 00, Framerate.fps59_94_DF);
 var baz = new Timecode("10:00:00:00", Framerate.fps24);
 
 foo.ToString() // "00:00:00:00"
-bar.AddMinutes(-61).ToString(); // "08:59:00:00"
+bar.AddMinutes(-61).ToString(); // "08:59:00;00"
 baz.ConvertFramerate(Framerate.fps25).ToString(); // "09:36:00:00"
 ```
 
