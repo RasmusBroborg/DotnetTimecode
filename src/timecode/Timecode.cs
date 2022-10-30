@@ -7,6 +7,10 @@ namespace DotnetTimecode
 {
 #pragma warning disable CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
 #pragma warning disable CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
+  /// <summary>
+  /// Represents an SMPTE Timecode. Supports the non drop frame formats HH:MM:FF:SS and -HH:MM:FF:SS,
+  /// <br/> as well as the drop frame formats HH:MM:SS;FF and -HH:MM:SS;FF.
+  /// </summary>
   public class Timecode
 #pragma warning restore CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
 #pragma warning restore CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
@@ -86,6 +90,8 @@ namespace DotnetTimecode
       Hour = hour;
 
       UpdateTimecodeTotalFrames();
+
+      if (HHMMSSFFNeedUpdating()) UpdateTimecodeHoursMinutesSecondsFrames();
     }
 
     /// <summary> 
@@ -97,7 +103,7 @@ namespace DotnetTimecode
     {
       ValidateTimecodeString(timecode);
 
-      string[] timecodeSplit = timecode.Split(":");
+      string[] timecodeSplit = SplitTimecode(timecode); 
 
       Framerate = framerate;
       Hour = Convert.ToInt32(timecodeSplit[0]);
@@ -106,6 +112,29 @@ namespace DotnetTimecode
       Frame = Convert.ToInt32(timecodeSplit[3]);
 
       UpdateTimecodeTotalFrames();
+
+      if (HHMMSSFFNeedUpdating()) UpdateTimecodeHoursMinutesSecondsFrames();
+    }
+
+    /// <summary>
+    /// Check
+    /// </summary>
+    /// <returns>True if any of the property values are set to a value which is invalid for the target timecode.</returns>
+    private bool HHMMSSFFNeedUpdating()
+    {
+      return Minute >= 60 || Second >= 60 || Frame >= FramerateValues.FramerateAsDecimals[Framerate];
+    }
+
+    /// <summary>
+    /// Splits a timecode into an array of strings, where each string represents 
+    /// a time value such as hour, minute, second, and frame positions.
+    /// </summary>
+    /// <param name="timecode">A string formatted as a timecode.</param>
+    /// <returns>Returns an array of substrings.</returns>
+    private string[] SplitTimecode(string timecode)
+    {
+      timecode = timecode.Replace(';', ':');
+      return timecode.Split(":");
     }
 
     #endregion Constructors
@@ -118,7 +147,10 @@ namespace DotnetTimecode
     /// <returns>The timecode formatted "HH:MM:SS:FF" or "-HH:MM:SS:FF"</returns>
     public override string ToString()
     {
-      return $"{AddZeroPadding(Hour)}:{AddZeroPadding(Minute)}:{AddZeroPadding(Second)}:{AddZeroPadding(Frame)}";
+      // Drop frame framerates are formatted HH:MM:SS;FF
+      char lastColon = Framerate == Framerate.fps29_97_DF || Framerate == Framerate.fps59_94_DF ? ';' : ':';
+
+      return $"{AddZeroPadding(Hour)}:{AddZeroPadding(Minute)}:{AddZeroPadding(Second)}{lastColon}{AddZeroPadding(Frame)}";
     }
 
     /// <summary> 
@@ -306,8 +338,8 @@ namespace DotnetTimecode
     /// <param name="originalTimecode">The original timecode, formatted "HH:MM:SS:FF" or "-HH:MM:SS:FF".</param>
     /// <param name="originalFramerate">The original timecode framerate.</param>
     /// <param name="destinationFramerate">The target framerate to convert to.</param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>
+    /// <returns>A string formatted as a timecode.</returns>
+    /// <exception cref="ArgumentException">Throws if the input timecode format is invalid.</exception>
     public static string ConvertFramerate(string originalTimecode, Framerate originalFramerate, Framerate destinationFramerate)
     {
       // Validate the original timecode format
