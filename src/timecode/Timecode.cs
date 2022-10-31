@@ -117,7 +117,7 @@ namespace DotnetTimecode
     }
 
     /// <summary>
-    /// Check
+    /// Check if the minute, second, and frame property values are invalid for the target timecode.
     /// </summary>
     /// <returns>True if any of the property values are set to a value which is invalid for the target timecode.</returns>
     private bool HHMMSSFFNeedUpdating()
