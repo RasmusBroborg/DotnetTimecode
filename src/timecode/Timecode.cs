@@ -5,15 +5,11 @@ using DotnetTimecode.Helpers;
 
 namespace DotnetTimecode
 {
-#pragma warning disable CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
-#pragma warning disable CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
   /// <summary>
   /// Represents an SMPTE Timecode. Supports the non drop frame formats HH:MM:FF:SS and -HH:MM:FF:SS,
   /// <br/> as well as the drop frame formats HH:MM:SS;FF and -HH:MM:SS;FF.
   /// </summary>
   public class Timecode
-#pragma warning restore CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
-#pragma warning restore CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
   {
     #region Public Properties
 
@@ -349,6 +345,36 @@ namespace DotnetTimecode
       timecode.ConvertFramerate(destinationFramerate);
       return timecode.ToString();
     }
+
+
+    public static string ConvertToSrtTimecode(string originalTimecode, Framerate originalFramerate)
+    {
+      ValidateTimecodeString(timecode);
+
+      string[] timecodeSplit = SplitTimecode(timecode); 
+
+      var hour = Convert.ToInt32(timecodeSplit[0]);
+      var minute = Convert.ToInt32(timecodeSplit[1]);
+      var second = Convert.ToInt32(timecodeSplit[2]);
+      var frame = Convert.ToInt32(timecodeSplit[3]);
+      decimal framerateDecimalValue = FramerateValues.FramerateAsDecimals[originalFramerate];
+      
+      var milliesecond = (frame / framerateDecimalValue) * 1000;
+      var milliesecondAsString = milliesecond.ToString();
+      var milliesecondThreeDigits = $"
+      {milliesecondAsString[0]}
+      {milliesecondAsString.Length >= 2 ? milliesecondAsString[1] : "0"}
+      {milliesecondAsString.Length >= 3 ? milliesecondAsString[2] : "0"}";
+
+      return $"{AddZeroPadding(hour)}:{AddZeroPadding(minute)}:{AddZeroPadding(second)},{milliesecondThreeDigits}";
+    }
+
+    public static string ConvertFromSrtTimecode(string srtTimecode, Framerate targetFramerate)
+    {
+
+    }
+
+
     #endregion Public Static Methods
 
     #region Operator Overloads
@@ -475,11 +501,15 @@ namespace DotnetTimecode
 
     #region Private Methods
 
+    // TODO: Add description of arguments
     /// <summary> 
     /// Pads the first number position with a 0 if the number is less than two positions long. 
     /// </summary> 
     /// <returns>A string representation of a number value in the format of ex: "09".</returns> 
-    private string AddZeroPadding(int num) => Math.Abs(num) < 10 ? $"0{num}" : num.ToString();
+    private string AddZeroPadding(int num, int totalNumberOfCharacters = 2)
+    {
+      return num.ToString().PadLeft(totalNumberOfCharacters, '0');
+    }
 
     /// <summary> 
     /// Calculates and sets the TotalFrames property based on Hour,  
