@@ -127,7 +127,7 @@ namespace DotnetTimecode
     /// </summary>
     /// <param name="timecode">A string formatted as a timecode.</param>
     /// <returns>Returns an array of substrings.</returns>
-    private string[] SplitTimecode(string timecode)
+    private static string[] SplitTimecode(string timecode)
     {
       timecode = timecode.Replace(';', ':');
       return timecode.Split(":");
@@ -347,31 +347,34 @@ namespace DotnetTimecode
     }
 
 
-    public static string ConvertToSrtTimecode(string originalTimecode, Framerate originalFramerate)
+    public static string ConvertTimecodeToSrtTimecode(string originalTimecode, Framerate originalFramerate)
     {
-      ValidateTimecodeString(timecode);
+      ValidateTimecodeString(originalTimecode);
 
-      string[] timecodeSplit = SplitTimecode(timecode); 
+      string[] timecodeSplit = SplitTimecode(originalTimecode); 
 
-      var hour = Convert.ToInt32(timecodeSplit[0]);
-      var minute = Convert.ToInt32(timecodeSplit[1]);
-      var second = Convert.ToInt32(timecodeSplit[2]);
-      var frame = Convert.ToInt32(timecodeSplit[3]);
+      int hour = Convert.ToInt32(timecodeSplit[0]);
+      int minute = Convert.ToInt32(timecodeSplit[1]);
+      int second = Convert.ToInt32(timecodeSplit[2]);
+      int frame = Convert.ToInt32(timecodeSplit[3]);
       decimal framerateDecimalValue = FramerateValues.FramerateAsDecimals[originalFramerate];
-      
-      var milliesecond = (frame / framerateDecimalValue) * 1000;
-      var milliesecondAsString = milliesecond.ToString();
-      var milliesecondThreeDigits = $"
-      {milliesecondAsString[0]}
-      {milliesecondAsString.Length >= 2 ? milliesecondAsString[1] : "0"}
-      {milliesecondAsString.Length >= 3 ? milliesecondAsString[2] : "0"}";
+
+      decimal milliesecond = (frame / framerateDecimalValue) * 1000;
+      decimal milliesecondRounded = Math.Round(milliesecond, 0, MidpointRounding.AwayFromZero);
+      string milliesecondRoundedAsStr = milliesecondRounded.ToString();
+
+      char milliesecondFirstDigit = milliesecondRoundedAsStr[0];
+      char milliesecondSecondDigit = milliesecondRoundedAsStr.Length >= 2 ? milliesecondRoundedAsStr[1] : '0';
+      char milliesecondThirdDigit = milliesecondRoundedAsStr.Length >= 3 ? milliesecondRoundedAsStr[2] : '0';
+
+      var milliesecondThreeDigits = $"{milliesecondFirstDigit}{milliesecondSecondDigit}{milliesecondThirdDigit}";
 
       return $"{AddZeroPadding(hour)}:{AddZeroPadding(minute)}:{AddZeroPadding(second)},{milliesecondThreeDigits}";
     }
 
-    public static string ConvertFromSrtTimecode(string srtTimecode, Framerate targetFramerate)
+    public static string ConvertSrtTimecodeToTimecode(string srtTimecode, Framerate targetFramerate)
     {
-
+      throw new NotImplementedException();
     }
 
 
@@ -506,7 +509,7 @@ namespace DotnetTimecode
     /// Pads the first number position with a 0 if the number is less than two positions long. 
     /// </summary> 
     /// <returns>A string representation of a number value in the format of ex: "09".</returns> 
-    private string AddZeroPadding(int num, int totalNumberOfCharacters = 2)
+    private static string AddZeroPadding(int num, int totalNumberOfCharacters = 2)
     {
       return num.ToString().PadLeft(totalNumberOfCharacters, '0');
     }

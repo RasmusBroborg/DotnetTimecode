@@ -1,6 +1,8 @@
 ﻿
 using System.Text.RegularExpressions;
 
+using DotnetTimecode.Enums;
+
 using FluentAssertions;
 
 namespace DotnetTimecode.test
@@ -251,40 +253,39 @@ namespace DotnetTimecode.test
 
     #region Public Static Methods
 
-    [Fact]
-    public void Add_1_Hour_To_GivenInputTimeString()
+    [Theory]
+    [InlineData("10:00:00:00", 1, "11:00:00:00")]
+    [InlineData("10:00:00:00", 100, "110:00:00:00")]
+    [InlineData("10:00:00:00", -1, "09:00:00:00")]
+    [InlineData("10:00:00:00", -11, "-01:00:00:00")]
+    [InlineData("10:00:00;00", -11, "-01:00:00;00")]
+    public void AddHours_StaticMethodTest_ExpectedResults(string timecodeStr, int hoursToAdd, string expectedResult)
     {
-      var sut = Timecode.AddHours("10:00:00:00", 1);
-      sut.Should().Be("11:00:00:00");
+      var sut = Timecode.AddHours(timecodeStr, hoursToAdd);
+      sut.Should().Be(expectedResult);
     }
 
-    [Fact]
-    public void Remove_1_Hour_To_GivenInputTimeString()
+    [Theory]
+    [InlineData("10.00.00.00")]
+    [InlineData("Not a timecode")]
+    [InlineData(" 10:00:00:00 ")]
+    [InlineData("+10:00:00:00")]
+    public void AddHours_StaticMethodTestWithInvalidInput_ThrowsException(string invalidTimecodeStr)
     {
-      var sut = Timecode.AddHours("10:00:00:00", -1);
-      sut.Should().Be("09:00:00:00");
-    }
-
-    [Fact]
-    public void throw_Exeception_When_InputString_Is_Invalid_While_Add_1_Hour()
-    {
-      Action act = () => Timecode.AddHours("", -1);
+      Action act = () => Timecode.AddHours(invalidTimecodeStr, 1);
       act.Should().Throw<ArgumentException>();
     }
 
-    [Fact]
-    public void Add_1_Minute_To_GivenInputTimeString()
+    [Theory]
+    [InlineData("10:00:00:00", 1, "10:01:00:00")]
+    [InlineData("10:00:00:00", 100, "11:40:00:00")]
+    [InlineData("10:00:00:00", -1, "09:59:00:00")]
+    [InlineData("10:00:00:00", -61, "-08:59:00:00")]
+    [InlineData("00:00:00;00", -1, "-00:01:00;00")]
+    public void AddMinutes_StaticMethodTest_ExpectedResults(string timecodeStr, int minutesToAdd, string expectedResult)
     {
-      var sut = Timecode.AddMinutes("10:00:00:00", 1);
-      sut.Should().Be("10:01:00:00");
-    }
-
-    [Fact]
-
-    public void Remove_1_Minute_To_GivenInputTimeString()
-    {
-      var sut = Timecode.AddMinutes("10:00:00:00", -1);
-      sut.Should().Be("09:59:00:00");
+      var sut = Timecode.AddMinutes(timecodeStr, minutesToAdd);
+      sut.Should().Be(expectedResult);
     }
 
     [Fact]
@@ -339,8 +340,31 @@ namespace DotnetTimecode.test
     [Fact]
     public void Convert_FrameRate_Using_Static_Method()
     {
-      var sut = Timecode.ConvertFramerate("10:00:00:00", Enums.Framerate.fps23_976, Enums.Framerate.fps59_94_NDF);
-      sut.Should().Be("04:00:00:00");
+      var result = Timecode.ConvertFramerate("10:00:00:00", Enums.Framerate.fps23_976, Enums.Framerate.fps59_94_NDF);
+      result.Should().Be("04:00:00:00");
+    }
+
+    [Theory]
+    [InlineData("10:01:20:15", Framerate.fps23_976, "10:01:20,626")] // 0.62562562562
+    [InlineData("10:01:20:15", Framerate.fps24, "10:01:20,625")] // 0.625
+    [InlineData("10:01:20:15", Framerate.fps25, "10:01:20,600")] // 0.600
+    [InlineData("10:01:20:15", Framerate.fps29_97_DF, "10:01:20,501")] // 0.5005005005
+    [InlineData("10:01:20;15", Framerate.fps29_97_NDF, "10:01:20,501")] // 0.5005005005
+    [InlineData("10:01:20:15", Framerate.fps30, "10:01:20,500")] // 0.500
+    [InlineData("10:01:20:15", Framerate.fps47_95, "10:01:20,313")] // 0.31282586027
+    [InlineData("10:01:20:15", Framerate.fps48, "10:01:20,313")] // 0.3125
+    [InlineData("10:01:20;15", Framerate.fps50, "10:01:20,300")] // 0.300
+    [InlineData("10:01:20;15", Framerate.fps59_94_DF, "10:01:20,250")] // 0.25025025025
+    [InlineData("10:01:20;15", Framerate.fps59_94_NDF, "10:01:20,250")] // 0.25025025025
+    [InlineData("10:01:20;15", Framerate.fps60, "10:01:20,250")] // 0.250
+    public void ConvertTimecodeToSrtTimecode_MultipleInputs_ExpectedBehaviour(
+      string timecodeStr, Framerate originalFramerate, string expectedResult)
+    {
+      // Act
+      var result = Timecode.ConvertTimecodeToSrtTimecode(timecodeStr, originalFramerate);
+
+      // Assert
+      result.Should().Be(expectedResult);
     }
 
     #endregion
