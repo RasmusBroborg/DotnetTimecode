@@ -236,6 +236,38 @@ namespace DotnetTimecode.test
     }
 
     [Fact]
+    public void Timecode_Subtracts_throughCompoundAssignmentOperator()
+    {
+      //Arrange
+      var t1 = new Timecode(11, 11, 11, 0, Enums.Framerate.fps29_97_NDF);
+      var t2 = new Timecode(1, 1, 1, 0, Enums.Framerate.fps29_97_NDF);
+
+      //Act 
+      t1 -= t2;
+      //Assert
+      Assert.Equal(10, t1.Hour);
+      Assert.Equal(10, t1.Minute);
+      Assert.Equal(10, t2.Second);
+
+    }
+
+    [Fact]
+    public void Timecode_Add_throughCompoundAssignmentOperator()
+    {
+      //Arrange
+      var t1 = new Timecode(11, 11, 11, 0, Enums.Framerate.fps29_97_NDF);
+      var t2 = new Timecode(1, 1, 1, 0, Enums.Framerate.fps29_97_NDF);
+
+      //Act 
+      t1 += t2;
+      //Assert
+      Assert.Equal(12, t1.Hour);
+      Assert.Equal(12, t1.Minute);
+      Assert.Equal(12, t2.Second);
+
+    }
+
+    [Fact]
     public void Timecode_Add_DifferentFrameRate_ThrowsException()
     {
       // Arrange
