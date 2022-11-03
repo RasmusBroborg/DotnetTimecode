@@ -247,7 +247,7 @@ namespace DotnetTimecode.test
       //Assert
       Assert.Equal(10, t1.Hour);
       Assert.Equal(10, t1.Minute);
-      Assert.Equal(10, t2.Second);
+      Assert.Equal(10, t1.Second);
 
     }
 
@@ -263,7 +263,7 @@ namespace DotnetTimecode.test
       //Assert
       Assert.Equal(12, t1.Hour);
       Assert.Equal(12, t1.Minute);
-      Assert.Equal(12, t2.Second);
+      Assert.Equal(12, t1.Second);
 
     }
 
