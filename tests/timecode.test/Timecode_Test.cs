@@ -398,13 +398,23 @@ namespace DotnetTimecode.test
     #endregion
 
     #region Public Static Properties
-    [Fact]
-    public void Timecode_Regex_Works()
+
+    [Theory]
+    [InlineData("10:00:00:00", true)]
+    [InlineData("10:00:00;00", true)]
+    [InlineData("", false)]
+    [InlineData("10 : 00 : 00 : 00", false)]
+    [InlineData("10.00:00;00", false)]
+    [InlineData("10:00:00.00", false)]
+    [InlineData("1:0:0;0", false)]
+    [InlineData("1:00:00;00", false)]
+    [InlineData("10:00:00;0", false)]
+    [InlineData("aa:aa:aa;aa", false)]
+    public void Timecode_Regex_Works(string timecodeStr, bool expectedResult)
     {
       var sut = new Regex(Timecode.TimecodeRegexPattern);
-      sut.Match("10:00:00:00").Success.Should().Be(true);
-      sut.Match("10:a0:00:00").Success.Should().Be(false);
-      sut.Match("10:000:00:00").Success.Should().Be(false);
+      bool result = sut.Match(timecodeStr).Success;
+      result.Should().Be(expectedResult);
     }
 
     #endregion
