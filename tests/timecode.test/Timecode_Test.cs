@@ -288,57 +288,85 @@ namespace DotnetTimecode.test
       sut.Should().Be(expectedResult);
     }
 
-    [Fact]
-    public void Throw_Exeception_When_InputString_Is_Invalid_While_Add_1_Minute()
+    [Theory]
+    [InlineData("10.00.00.00")]
+    [InlineData("Not a timecode")]
+    [InlineData(" 10:00:00:00 ")]
+    [InlineData("+10:00:00:00")]
+    public void AddMinutes_StaticMethodTestWithInvalidInput_ThrowsException(string invalidTimecodeStr)
     {
-      Action act = () => Timecode.AddMinutes("", -1);
+      Action act = () => Timecode.AddMinutes(invalidTimecodeStr, 1);
       act.Should().Throw<ArgumentException>();
     }
 
-    [Fact]
-    public void Add_1_Second_To_GivenInputTimeString()
+    [Theory]
+    [InlineData("10:00:00:00", 1, "10:00:01:00")]
+    [InlineData("10:00:00:00", 100, "10:01:40:00")]
+    [InlineData("10:00:00:00", -1, "09:59:59:00")]
+    [InlineData("00:00:00:00", -61, "-00:01:01:00")]
+    [InlineData("00:00:00;00", -121, "-00:02:01;00")]
+    public void AddSeconds_StaticMethodTest_ExpectedResults(string timecodeStr, int secondsToAdd, string expectedResult)
     {
-      var sut = Timecode.AddSeconds("10:00:00:00", 1);
-      sut.Should().Be("10:00:01:00");
+      var sut = Timecode.AddSeconds(timecodeStr, secondsToAdd);
+      sut.Should().Be(expectedResult);
     }
 
-    [Fact]
-    public void Remove_1_Second_To_GivenInputTimeString()
+    [Theory]
+    [InlineData("10.00.00.00")]
+    [InlineData("Not a timecode")]
+    [InlineData(" 10:00:00:00 ")]
+    [InlineData("+10:00:00:00")]
+    public void AddSeconds_StaticMethodTestWithInvalidInput_ThrowsException(string invalidTimecodeStr)
     {
-      var sut = Timecode.AddSeconds("10:00:00:00", -1);
-      sut.Should().Be("09:59:59:00");
-    }
-
-    [Fact]
-    public void throw_Exeception_When_InputString_Is_Invalid_While_Add_1_Second()
-    {
-      Action act = () => Timecode.AddSeconds("", -1);
+      Action act = () => Timecode.AddSeconds(invalidTimecodeStr, 1);
       act.Should().Throw<ArgumentException>();
     }
 
-    [Fact]
-    public void Add_Frames_To_GivenInputTimeString()
+    [Theory]
+    [InlineData("10:00:00:00", 24, Framerate.fps23_976, "10:00:01:00")]
+    [InlineData("10:00:00:00", 24, Framerate.fps24, "10:00:01:00")]
+    [InlineData("10:00:00:00", 25, Framerate.fps25, "10:00:01:00")]
+    [InlineData("10:00:00;00", 30, Framerate.fps29_97_DF, "10:00:01;00")]
+    [InlineData("10:00:00:00", 30, Framerate.fps29_97_NDF, "10:00:01:00")]
+    [InlineData("10:00:00:00", 30, Framerate.fps30, "10:00:01:00")]
+    [InlineData("10:00:00:00", 48, Framerate.fps47_95, "10:00:01:00")]
+    [InlineData("10:00:00:00", 48, Framerate.fps48, "10:00:01:00")]
+    [InlineData("10:00:00:00", 50, Framerate.fps50, "10:00:01:00")]
+    [InlineData("10:00:00;00", 60, Framerate.fps59_94_DF, "10:00:01;00")]
+    [InlineData("10:00:00:00", 60, Framerate.fps59_94_NDF, "10:00:01:00")]
+    [InlineData("10:00:00:00", 60, Framerate.fps60, "10:00:01:00")]
+    [InlineData("00:00:00:00", 24, Framerate.fps23_976, "-00:00:01:00")]
+    [InlineData("00:00:00:00", 24, Framerate.fps24, "-00:00:01:00")]
+    [InlineData("00:00:00:00", 25, Framerate.fps25, "-00:00:01:00")]
+    [InlineData("00:00:00;00", 30, Framerate.fps29_97_DF, "-00:00:01;00")]
+    [InlineData("00:00:00:00", 30, Framerate.fps29_97_NDF, "-00:00:01:00")]
+    [InlineData("00:00:00:00", 30, Framerate.fps30, "-00:00:01:00")]
+    [InlineData("00:00:00:00", 48, Framerate.fps47_95, "-00:00:01:00")]
+    [InlineData("00:00:00:00", 48, Framerate.fps48, "-00:00:01:00")]
+    [InlineData("00:00:00:00", 50, Framerate.fps50, "-00:00:01:00")]
+    [InlineData("00:00:00;00", 60, Framerate.fps59_94_DF, "-00:00:01;00")]
+    [InlineData("00:00:00:00", 60, Framerate.fps59_94_NDF, "-00:00:01:00")]
+    [InlineData("00:00:00:00", 60, Framerate.fps60, "-00:00:01:00")]
+    public void AddFrames_StaticMethodTest_ExpectedResults(string timecodeStr, int framesToAdd, Framerate framerate, string expectedResult)
     {
-      var sut = Timecode.AddFrames("10:00:00:00", 50, Enums.Framerate.fps25);
-      sut.Should().Be("10:00:02:00");
+      var sut = Timecode.AddFrames(timecodeStr, framesToAdd, framerate);
+      sut.Should().Be(expectedResult);
     }
 
-    [Fact]
-    public void Remove_Frames_To_GivenInputTimeString()
+    [Theory]
+    [InlineData("10.00.00.00")]
+    [InlineData("Not a timecode")]
+    [InlineData(" 10:00:00:00 ")]
+    [InlineData("+10:00:00:00")]
+    public void AddFrames_StaticMethodTestWithInvalidInput_ThrowsException(string invalidTimecodeStr)
     {
-      var sut = Timecode.AddFrames("10:00:00:00", -50, Enums.Framerate.fps25);
-      sut.Should().Be("09:59:58:00");
-    }
-
-    [Fact]
-    public void throw_Exeception_When_InputString_Is_Invalid_While_Add_Frame()
-    {
-      Action act = () => Timecode.AddFrames("", -50, Enums.Framerate.fps25);
+      Action act = () => Timecode.AddFrames(invalidTimecodeStr, 1, Enums.Framerate.fps25);
       act.Should().Throw<ArgumentException>();
     }
 
+    // TODO: Write better inputs
     [Fact]
-    public void Convert_FrameRate_Using_Static_Method()
+    public void ConvertFramerate_StaticMethodTest_ExpectedResults()
     {
       var result = Timecode.ConvertFramerate("10:00:00:00", Enums.Framerate.fps23_976, Enums.Framerate.fps59_94_NDF);
       result.Should().Be("04:00:00:00");
