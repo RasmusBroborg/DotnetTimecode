@@ -132,12 +132,10 @@ namespace DotnetTimecode.test
     [InlineData("10:00:00:00", Framerate.fps24, 100, "11:40:00:00")]
     [InlineData("10:00:00:00", Framerate.fps25, -1, "09:59:00:00")]
     [InlineData("10:00:00;00", Framerate.fps29_97_DF, -11, "09:49:00;00")]
-    [InlineData("00:00:00:00", Framerate.fps29_97_NDF, -11, "-00:11:00:00")]
     [InlineData("10:00:00:00", Framerate.fps30, 22, "10:22:00:00")]
     [InlineData("10:00:00:00", Framerate.fps47_95, 100, "11:40:00:00")]
     [InlineData("10:00:00:00", Framerate.fps48, -1, "09:59:00:00")]
     [InlineData("00:00:00:00", Framerate.fps50, -120, "-02:00:00:00")]
-    [InlineData("00:00:00;00", Framerate.fps59_94_DF, -2, "-00:02:00;00")]
     [InlineData("10:00:00:00", Framerate.fps59_94_NDF, 59, "10:59:00:00")]
     [InlineData("10:00:00:00", Framerate.fps60, 1, "10:01:00:00")]
     public void AddMinutes_MultipleInputs_ExpectedResults(
@@ -155,16 +153,13 @@ namespace DotnetTimecode.test
     }
 
     [Theory]
+    [InlineData("10:00:00:00", Framerate.fps47_95, 120, "10:02:00:00")]
     [InlineData("10:00:00:00", Framerate.fps23_976, 1, "10:00:01:00")]
     [InlineData("10:00:00:00", Framerate.fps24, 100, "10:01:40:00")]
     [InlineData("10:00:00:00", Framerate.fps25, -1, "09:59:59:00")]
     [InlineData("10:00:00;00", Framerate.fps29_97_DF, -11, "09:59:49;00")]
-    [InlineData("00:00:00:00", Framerate.fps29_97_NDF, -11, "-00:00:11:00")]
     [InlineData("10:00:00:00", Framerate.fps30, 22, "10:00:22:00")]
-    [InlineData("10:00:00:00", Framerate.fps47_95, 120, "10:02:00:00")]
     [InlineData("10:00:00:00", Framerate.fps48, -1, "09:59:59:00")]
-    [InlineData("00:00:00:00", Framerate.fps50, -120, "-00:02:00:00")]
-    [InlineData("00:00:00;00", Framerate.fps59_94_DF, -2, "-00:00:02;00")]
     [InlineData("10:00:00:00", Framerate.fps59_94_NDF, 59, "10:00:59:00")]
     [InlineData("10:00:00:00", Framerate.fps60, 1, "10:00:01:00")]
     public void AddSeconds_MultipleInputs_ExpectedResults(
@@ -270,10 +265,6 @@ namespace DotnetTimecode.test
     [InlineData("10:00:00:00", Framerate.fps24, 1, "10:01:00:00")]
     [InlineData("10:00:00:00", Framerate.fps50, 100, "11:40:00:00")]
     [InlineData("10:00:00:00", Framerate.fps24, -1, "09:59:00:00")]
-    [InlineData("10:00:00:00", Framerate.fps24, -61, "-08:59:00:00")]
-    [InlineData("00:00:00;00", Framerate.fps29_97_DF, -1, "-00:01:00;00")]
-    [InlineData("00:00:00;00", Framerate.fps24, -61, "-01:01:00:00")]
-    [InlineData("00:00:00;00", Framerate.fps29_97_DF, -121, "-02:01:00;00")]
     public void AddMinutes_StaticMethodTest_ExpectedResults(
       string timecodeStr, Framerate framerate, int minutesToAdd, string expectedResult)
     {
@@ -296,8 +287,6 @@ namespace DotnetTimecode.test
     [InlineData("10:00:00:00", Framerate.fps24, 1, "10:00:01:00")]
     [InlineData("10:00:00:00", Framerate.fps24, 100, "10:01:40:00")]
     [InlineData("10:00:00:00", Framerate.fps24, -1, "09:59:59:00")]
-    [InlineData("00:00:00:00", Framerate.fps24, -61, "-00:01:01:00")]
-    [InlineData("00:00:00;00", Framerate.fps59_94_DF, -121, "-00:02:01;00")]
     public void AddSeconds_StaticMethodTest_ExpectedResults(
       string timecodeStr, Framerate framerate, int secondsToAdd, string expectedResult)
     {
