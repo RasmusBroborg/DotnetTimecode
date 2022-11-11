@@ -1,16 +1,16 @@
 ![Image of a non drop frame timecode.](https://github.com/RasmusBroborg/dotnet-timecode/blob/main/assets/DotnetTimecode_asset_2997NDF.png?raw=true)
 
-## What is Dotnet Timecode?
+# What is Dotnet Timecode?
 
 [![CI](https://github.com/RasmusBroborg/dotnet-timecode/actions/workflows/ci.yml/badge.svg)](https://github.com/RasmusBroborg/dotnet-timecode/actions/workflows/ci.yml)
 [![NuGet](https://img.shields.io/nuget/v/DotnetTimecode.svg)](https://www.nuget.org/packages/DotnetTimecode/)
 [![Nuget](https://img.shields.io/nuget/dt/DotnetTimecode.svg)](https://nuget.org/packages/DotnetTimecode)
 
-Dotnet Timecode is a single class c# library built to create an API for working with SMPTE Timecodes defined by the Society of Motion Picture and Television Engineers in the SMPTE 12M specification.
+Dotnet Timecode is a c# class library for working with SMPTE Timecodes defined by the Society of Motion Picture and Television Engineers in the SMPTE 12M specification.
 
 The library allows the user to construct timecode objects, manipulate timecode values, and convert between the most common framerates, including drop frame framerates such as 29.97DF and 59.95DF.
 
-## How do I get started?
+# How do I get started?
 
 Get the latest nuget package using the dotnet CLI
 
@@ -41,7 +41,7 @@ bar.AddMinutes(-61).ToString(); // "08:59:00;00"
 baz.ConvertFramerate(Framerate.fps25).ToString(); // "09:36:00:00"
 ```
 
-## Public endpoints
+# Public endpoints
 
 ### Constructors
 
@@ -70,6 +70,8 @@ string timecodeString = Timecode.AddMinutes(string timecode, int minutes);
 string timecodeString = Timecode.AddSeconds(string timecode, int seconds);
 string timecodeString = Timecode.AddFrames(string timecode, int frames);
 string timecodeString = Timecode.ConvertFramerate(string timecode, Enums.Framerate originalFramerate, Enums.Framerate targetFramerate);
+string timecodeString = Timecode.ConvertSrtTimecodeToTimecode(string srtTimecode, Enums.Framerate framerate);
+string srtTimecodeString = Timecode.ConvertTimecodeToSrtTimecode(string timecode, Enums.Framerate framerate);
 ```
 
 ### Object Properties
@@ -86,7 +88,8 @@ Enums.Framerate framerate = timecodeObj.Framerate;
 ### Static Properties
 
 ```csharp
-string timecodeRegex = Timecode.RegexPattern;
+string timecodeRegex = Timecode.TimecodeRegexPattern;
+string srtTimecodeRegex = Timecode.SrtTimecodeRegexPattern;
 ```
 
 ### Operator Overloading
@@ -105,12 +108,12 @@ tc1 == tc2; // False
 tc1 != tc2; // True
 ```
 
-## Contributions
+# Contributions
 
 ### How to contribute to the project
 
 See [CONTRIBUTING.md](https://github.com/RasmusBroborg/dotnet-timecode/blob/master/CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](https://github.com/RasmusBroborg/dotnet-timecode/blob/master/CODE_OF_CONDUCT.md) for instructions on how to contribute to the project.
 
-## License, etc.
+# License
 
 Dotnet Timecode is Copyright &copy; 2022 Rasmus Broborg and other contributors under the [MIT license](LICENSE.txt).

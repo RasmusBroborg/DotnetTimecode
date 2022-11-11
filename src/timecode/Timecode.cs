@@ -5,23 +5,25 @@ using DotnetTimecode.Helpers;
 
 namespace DotnetTimecode
 {
-#pragma warning disable CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
-#pragma warning disable CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
   /// <summary>
   /// Represents an SMPTE Timecode. Supports the non drop frame formats HH:MM:FF:SS and -HH:MM:FF:SS,
   /// <br/> as well as the drop frame formats HH:MM:SS;FF and -HH:MM:SS;FF.
   /// </summary>
   public class Timecode
-#pragma warning restore CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
-#pragma warning restore CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
   {
     #region Public Properties
 
     /// <summary>
     /// Regular expression pattern of a timecode following the format. 
-    /// Supports the format "HH:MM:SS:FF", "HH:MM:SS;FF", "-HH:MM:SS:FF", "-HH:MM:SS;FF".
+    /// Supports the format "HH:MM:SS:FF", "HH:MM:SS;FF".
     /// </summary>
     public const string TimecodeRegexPattern = @"^(-){0,1}(([0-9]){2}:){2}(([0-9]){2})(;|:)([0-9]){2}$";
+
+    /// <summary>
+    /// Regular expression pattern of a timecode following the format. 
+    /// Supports the format "HH:MM:SS:XXX", where XXX represents millieseconds.
+    /// </summary>
+    public const string SrtTimecodeRegexPattern = @"^{0,1}(([0-9]){2}:){2}(([0-9]){2})(,)([0-9]){3}$";
 
     /// <summary> 
     /// The timecode hour position.
@@ -97,7 +99,7 @@ namespace DotnetTimecode
     /// <summary> 
     /// Creates a new Timecode object at a specified timecode position. 
     /// </summary> 
-    /// <param name="timecode">The timecode represented as a string formatted "HH:MM:SS:FF" or "-HH:MM:SS:FF".</param> 
+    /// <param name="timecode">The timecode represented as a string formatted "HH:MM:SS:FF" or "HH:MM:SS;FF".</param>
     /// <param name="framerate">The timecode framerate.</param> 
     public Timecode(string timecode, Framerate framerate)
     {
@@ -119,7 +121,8 @@ namespace DotnetTimecode
     /// <summary>
     /// Check if the minute, second, and frame property values are invalid for the target timecode.
     /// </summary>
-    /// <returns>True if any of the property values are set to a value which is invalid for the target timecode.</returns>
+    /// <returns>True if any of the property values are set to a value which is invalid for the target 
+    /// timecode.</returns>
     private bool HHMMSSFFNeedUpdating()
     {
       return Minute >= 60 || Second >= 60 || Frame >= FramerateValues.FramerateAsDecimals[Framerate];
@@ -131,9 +134,21 @@ namespace DotnetTimecode
     /// </summary>
     /// <param name="timecode">A string formatted as a timecode.</param>
     /// <returns>Returns an array of substrings.</returns>
-    private string[] SplitTimecode(string timecode)
+    private static string[] SplitTimecode(string timecode)
     {
       timecode = timecode.Replace(';', ':');
+      return timecode.Split(":");
+    }
+
+    /// <summary>
+    /// Splits an SRT timecode into an array of strings, where each string represents 
+    /// a time value such as hour, minute, second, and milliesecond positions.
+    /// </summary>
+    /// <param name="timecode">A string formatted as a timecode.</param>
+    /// <returns>Returns an array of substrings.</returns>
+    private static string[] SplitSrtTimecode(string timecode)
+    {
+      timecode = timecode.Replace(',', ':');
       return timecode.Split(":");
     }
 
@@ -142,15 +157,20 @@ namespace DotnetTimecode
     #region Public Methods
 
     /// <summary>
-    /// Returns the timecode as a string formatted "HH:MM:SS:FF" or "-HH:MM:SS:FF". 
+    /// Returns the timecode as a string formatted "HH:MM:SS:FF" and "HH:MM:SS;FF". 
     /// </summary>
-    /// <returns>The timecode formatted "HH:MM:SS:FF" or "-HH:MM:SS:FF"</returns>
+    /// <returns>The timecode formatted "HH:MM:SS:FF" and "HH:MM:SS;FF"</returns>
     public override string ToString()
     {
       // Drop frame framerates are formatted HH:MM:SS;FF
-      char lastColon = Framerate == Framerate.fps29_97_DF || Framerate == Framerate.fps59_94_DF ? ';' : ':';
+      char lastColon = FramerateValues.IsNonDropFrame(Framerate) ? ':' : ';';
+      bool isNegativeTimecode = TotalFrames < 0;
+      string firstChar = isNegativeTimecode ? "-" : "";
 
-      return $"{AddZeroPadding(Hour)}:{AddZeroPadding(Minute)}:{AddZeroPadding(Second)}{lastColon}{AddZeroPadding(Frame)}";
+      return $"{firstChar}{AddZeroPadding(Hour)}" +
+        $":{AddZeroPadding(Minute)}" +
+        $":{AddZeroPadding(Second)}" +
+        $"{lastColon}{AddZeroPadding(Frame)}";
     }
 
     /// <summary> 
@@ -166,19 +186,17 @@ namespace DotnetTimecode
       UpdateTimecodeTotalFrames();
     }
 
-
     /// <summary> 
     /// Adds minutes to the timecode. 
     /// <br/><br/> 
     /// Positive integer values add minutes,  
     /// while negative values subtract minutes. 
     /// </summary> 
-    /// <param name="minutes">Number of minutes to add to the timecode.</param>
+    /// <param name="minutesToAdd">The number of minutes to add to the timecode.</param>
     public void AddMinutes(int minutesToAdd)
     {
       int hoursToAdd = minutesToAdd / 60;
       minutesToAdd = minutesToAdd % 60;
-
       int totalMinutes = Minute + minutesToAdd;
       int minutesInAnHour = 60;
 
@@ -205,11 +223,11 @@ namespace DotnetTimecode
     /// Positive integer values add seconds,  
     /// while negative values subtract seconds. 
     /// </summary> 
-    /// <param name="secondsToAdd">Number of seconds to add to the timecode.</param> 
+    /// <param name="secondsToAdd">The number of seconds to add to the timecode.</param> 
     public void AddSeconds(int secondsToAdd)
     {
       int hoursToBeAdded = secondsToAdd / 60 / 60;
-      int secondsRemainingAfterHoursRemoved = secondsToAdd % (60 * 2);
+      int secondsRemainingAfterHoursRemoved = secondsToAdd - (hoursToBeAdded * 60 * 60);
       int minutesToBeAdded = secondsRemainingAfterHoursRemoved / 60;
       int secondsToBeAdded = secondsRemainingAfterHoursRemoved % 60;
       int totalSeconds = Second + secondsToBeAdded;
@@ -248,7 +266,7 @@ namespace DotnetTimecode
     /// Positive integer values add frames,  
     /// while negative values remove frames. 
     /// </summary> 
-    /// <param name="framesToAdd">Number of frames to add to the timecode.</param> 
+    /// <param name="framesToAdd">The number of frames to add to the timecode.</param> 
     public void AddFrames(int framesToAdd)
     {
       TotalFrames += framesToAdd;
@@ -275,13 +293,14 @@ namespace DotnetTimecode
     /// Positive integer values add hours, 
     /// while negative values subtract hours.
     /// </summary>
-    /// <param name="inputString">Timecode to update, formatted "HH:MM:SS:FF" or "-HH:MM:SS:FF".</param>
-    /// <param name="hours">Number of hours to add or subtract.</param>
-    public static string AddHours(string timecode, int hours)
+    /// <param name="timecode">Timecode to update, formatted "HH:MM:SS:FF" and "HH:MM:SS;FF".</param>
+    /// <param name="framerate">The timecode framerate.</param>
+    /// <param name="hoursToAdd">Number of hours to add or subtract.</param>
+    public static string AddHours(string timecode, Framerate framerate, int hoursToAdd)
     {
       ValidateTimecodeString(timecode);
-      Timecode timecodeObj = new Timecode(timecode, Framerate.fps24);
-      timecodeObj.AddHours(hours);
+      Timecode timecodeObj = new Timecode(timecode, framerate);
+      timecodeObj.AddHours(hoursToAdd);
       return timecodeObj.ToString();
     }
 
@@ -291,13 +310,14 @@ namespace DotnetTimecode
     /// Positive integer values add minutes, 
     /// while negative values subtract minutes.
     /// </summary>
-    /// <param name="timecode">Timecode to update, formatted "HH:MM:SS:FF" or "-HH:MM:SS:FF".</param>
-    /// <param name="minutes">Number of minutes to add or subtract.</param>
-    public static string AddMinutes(string timecode, int minutes)
+    /// <param name="timecode">Timecode to update, formatted "HH:MM:SS:FF" and "HH:MM:SS;FF".</param>
+    /// <param name="framerate">The timecode framerate.</param>
+    /// <param name="minutesToAdd">Number of minutes to add or subtract.</param>
+    public static string AddMinutes(string timecode, Framerate framerate, int minutesToAdd)
     {
       ValidateTimecodeString(timecode);
-      Timecode timecodeObj = new Timecode(timecode, Framerate.fps24);
-      timecodeObj.AddMinutes(minutes);
+      Timecode timecodeObj = new Timecode(timecode, framerate);
+      timecodeObj.AddMinutes(minutesToAdd);
       return timecodeObj.ToString();
     }
 
@@ -307,25 +327,28 @@ namespace DotnetTimecode
     /// Positive integer values add seconds, 
     /// while negative values subtract seconds.
     /// </summary>
-    /// <param name="timecode">Timecode to update, formatted "HH:MM:SS:FF" or "-HH:MM:SS:FF".</param>
-    /// <param name="seconds">Number of seconds to add or subtract.</param>
-    public static string AddSeconds(string timecode, int seconds)
+    /// <param name="timecode">Timecode to update, formatted "HH:MM:SS:FF" and "HH:MM:SS;FF".</param>
+    /// <param name="secondsToAdd">Number of seconds to add or subtract.</param>
+    public static string AddSeconds(string timecode, Framerate framerate, int secondsToAdd)
     {
       ValidateTimecodeString(timecode);
-      Timecode timecodeObj = new Timecode(timecode, Framerate.fps24);
-      timecodeObj.AddSeconds(seconds);
+      Timecode timecodeObj = new Timecode(timecode, framerate);
+      timecodeObj.AddSeconds(secondsToAdd);
       return timecodeObj.ToString();
     }
 
     /// <summary>
+    /// /// <summary>
     /// Adds seconds to the given time. 
     /// <br/><br/>
     /// Positive integer values add frames, 
     /// while negative values subtract frames.
     /// </summary>
-    /// <param name="inputString">Timecode to update, formatted "HH:MM:SS:FF" or "-HH:MM:SS:FF".</param>
+    /// <param name="inputString">Timecode to update, formatted "HH:MM:SS:FF" and "HH:MM:SS;FF".</param>
     /// <param name="frames">Number of frames to add or subtract.</param>
-    public static string AddFrames(string inputString, int frames, Framerate framerate)
+    /// <param name="framerate"></param>
+    /// <returns></returns>
+    public static string AddFrames(string inputString, Framerate framerate, int frames)
     {
       Timecode timecode = new Timecode(inputString, framerate);
       timecode.AddFrames(frames);
@@ -335,12 +358,13 @@ namespace DotnetTimecode
     /// <summary>
     /// Converts a timecode string to a timecode string of a different framerate.
     /// </summary>
-    /// <param name="originalTimecode">The original timecode, formatted "HH:MM:SS:FF" or "-HH:MM:SS:FF".</param>
+    /// <param name="originalTimecode">The original timecode, formatted "HH:MM:SS:FF" and "HH:MM:SS;FF".</param>
     /// <param name="originalFramerate">The original timecode framerate.</param>
     /// <param name="destinationFramerate">The target framerate to convert to.</param>
     /// <returns>A string formatted as a timecode.</returns>
     /// <exception cref="ArgumentException">Throws if the input timecode format is invalid.</exception>
-    public static string ConvertFramerate(string originalTimecode, Framerate originalFramerate, Framerate destinationFramerate)
+    public static string ConvertFramerate(
+      string originalTimecode, Framerate originalFramerate, Framerate destinationFramerate)
     {
       // Validate the original timecode format
       ValidateTimecodeString(originalTimecode);
@@ -349,6 +373,68 @@ namespace DotnetTimecode
       timecode.ConvertFramerate(destinationFramerate);
       return timecode.ToString();
     }
+
+    /// <summary>
+    /// Converts a timecode string formatted HH:MM:SS:FF to an srt timecode string formatted HH:MM:SS:XXX,
+    /// where XXX represents millieseconds.
+    /// </summary>
+    /// <param name="timecode">The original timecode to convert from.</param>
+    /// <param name="framerate">The original timecode framerate.</param>
+    /// <returns>An srt timecode string.</returns>
+    public static string ConvertTimecodeToSrtTimecode(string timecode, Framerate framerate)
+    {
+      ValidateTimecodeString(timecode);
+
+      string[] timecodeSplit = SplitTimecode(timecode); 
+
+      int hour = Convert.ToInt32(timecodeSplit[0]);
+      int minute = Convert.ToInt32(timecodeSplit[1]);
+      int second = Convert.ToInt32(timecodeSplit[2]);
+      int frame = Convert.ToInt32(timecodeSplit[3]);
+      decimal framerateDecimalValue = FramerateValues.FramerateAsDecimals[framerate];
+
+      decimal milliesecond = (frame / framerateDecimalValue) * 1000;
+      decimal milliesecondRounded = Math.Round(milliesecond, 0, MidpointRounding.AwayFromZero);
+      string milliesecondRoundedAsStr = milliesecondRounded.ToString();
+
+      char milliesecondFirstDigit = milliesecondRoundedAsStr[0];
+      char milliesecondSecondDigit = milliesecondRoundedAsStr.Length >= 2 ? milliesecondRoundedAsStr[1] : '0';
+      char milliesecondThirdDigit = milliesecondRoundedAsStr.Length >= 3 ? milliesecondRoundedAsStr[2] : '0';
+
+      var milliesecondThreeDigits = $"{milliesecondFirstDigit}{milliesecondSecondDigit}{milliesecondThirdDigit}";
+
+      return $"{AddZeroPadding(hour)}:{AddZeroPadding(minute)}:{AddZeroPadding(second)},{milliesecondThreeDigits}";
+    }
+
+    /// <summary>
+    /// Converts an srt timecode string formatted HH:MM:SS:XXX,
+    /// where XXX represents millieseconds, to a timecode string formatted HH:MM:SS:FF (NDF) or HH:MM:SS;FF (DF).
+    /// </summary>
+    /// <param name="srtTimecode">The original srt timecode to convert from.</param>
+    /// <param name="framerate">The target framerate.</param>
+    /// <returns></returns>
+    public static string ConvertSrtTimecodeToTimecode(string srtTimecode, Framerate framerate)
+    {
+      ValidateSrtTimecodeString(srtTimecode);
+
+      string[] timecodeSplit = SplitSrtTimecode(srtTimecode);
+
+      int hour = Convert.ToInt32(timecodeSplit[0]);
+      int minute = Convert.ToInt32(timecodeSplit[1]);
+      int second = Convert.ToInt32(timecodeSplit[2]);
+      int millieseconds = Convert.ToInt32(timecodeSplit[3]);
+
+      decimal framerateDecimalValue = FramerateValues.FramerateAsDecimals[framerate];
+
+      decimal frameAsDec = (millieseconds * framerateDecimalValue) / 1000;
+
+      decimal frameRounded = Math.Round(frameAsDec, 0, MidpointRounding.AwayFromZero);
+      int frame = (int)frameRounded;
+      char lastDelimiter = FramerateValues.GetLastDelimiter(framerate);
+
+      return $"{AddZeroPadding(hour)}:{AddZeroPadding(minute)}:{AddZeroPadding(second)}{lastDelimiter}{AddZeroPadding(frame)}";
+    }
+
     #endregion Public Static Methods
 
     #region Operator Overloads
@@ -396,7 +482,8 @@ namespace DotnetTimecode
     {
       if (leftTimecode.Framerate != rightTimecode.Framerate)
       {
-        throw new InvalidOperationException("Size comparison operations between different framerates are invalid. \n Use the TotalFrames property for comparison operations between timecodes instead.");
+        throw new InvalidOperationException("Size comparison operations between different framerates are invalid. " +
+          "\n Use the TotalFrames property for comparison operations between timecodes instead.");
       }
       return leftTimecode.TotalFrames < rightTimecode.TotalFrames;
     }
@@ -412,7 +499,8 @@ namespace DotnetTimecode
     {
       if (leftTimecode.Framerate != rightTimecode.Framerate)
       {
-        throw new InvalidOperationException("Size comparison operations between different framerates are invalid. \n Use the TotalFrames property for comparison operations between timecodes instead.");
+        throw new InvalidOperationException("Size comparison operations between different framerates are invalid. " +
+          "\n Use the TotalFrames property for comparison operations between timecodes instead.");
       }
       return leftTimecode.TotalFrames > rightTimecode.TotalFrames;
     }
@@ -428,7 +516,8 @@ namespace DotnetTimecode
     {
       if (leftTimecode.Framerate != rightTimecode.Framerate)
       {
-        throw new InvalidOperationException("Size comparison operations between different framerates are invalid. \n Use the TotalFrames property for comparison operations between timecodes instead.");
+        throw new InvalidOperationException("Size comparison operations between different framerates are invalid. " +
+          "\n Use the TotalFrames property for comparison operations between timecodes instead.");
       }
       return leftTimecode.TotalFrames <= rightTimecode.TotalFrames;
     }
@@ -444,42 +533,27 @@ namespace DotnetTimecode
     {
       if (leftTimecode.Framerate != rightTimecode.Framerate)
       {
-        throw new InvalidOperationException("Size comparison operations between different framerates are invalid. \n Use the TotalFrames property for comparison operations between timecodes instead.");
+        throw new InvalidOperationException("Size comparison operations between different framerates are invalid. " +
+          "\n Use the TotalFrames property for comparison operations between timecodes instead.");
       }
       return leftTimecode.TotalFrames >= rightTimecode.TotalFrames;
-    }
-
-    /// <summary> 
-    /// Check whether timecodes are equal. 
-    /// </summary> 
-    /// <param name="left">Left hand side timecode.</param> 
-    /// <param name="right">Right hand side timecode.</param> 
-    /// <returns>Whether timecodes are equal</returns> 
-    public static bool operator ==(Timecode leftTimecode, Timecode rightTimecode)
-    {
-      return leftTimecode.TotalFrames == rightTimecode.TotalFrames && leftTimecode.Framerate == rightTimecode.Framerate;
-    }
-
-    /// <summary> 
-    /// Check whether timecodes are not equal. 
-    /// </summary> 
-    /// <param name="leftTimecode"></param> 
-    /// <param name="rightTimecode"></param> 
-    /// <returns>Whether timecodes are not equal</returns> 
-    public static bool operator !=(Timecode leftTimecode, Timecode rightTimecode)
-    {
-      return leftTimecode.TotalFrames != rightTimecode.TotalFrames && leftTimecode.Framerate != rightTimecode.Framerate;
     }
 
     #endregion Operator Overloads
 
     #region Private Methods
 
-    /// <summary> 
-    /// Pads the first number position with a 0 if the number is less than two positions long. 
-    /// </summary> 
-    /// <returns>A string representation of a number value in the format of ex: "09".</returns> 
-    private string AddZeroPadding(int num) => Math.Abs(num) < 10 ? $"0{num}" : num.ToString();
+    /// <summary>
+    /// Pads the first number position with a 0 if the number is less than two positions long.
+    /// </summary>
+    /// <param name="num">The number to add padding to.</param>
+    /// <param name="totalNumberOfCharacters">The result string number of characters.</param>
+    /// <returns>A padded string representation of the number.</returns>
+    private static string AddZeroPadding(int num, int totalNumberOfCharacters = 2)
+    {
+      int numAbs = Math.Abs(num);
+      return numAbs.ToString().PadLeft(totalNumberOfCharacters, '0');
+    }
 
     /// <summary> 
     /// Calculates and sets the TotalFrames property based on Hour,  
@@ -487,13 +561,13 @@ namespace DotnetTimecode
     /// </summary> 
     private void UpdateTimecodeTotalFrames()
     {
-      if (Framerate == Framerate.fps59_94_DF || Framerate == Framerate.fps29_97_DF)
+      if (FramerateValues.IsNonDropFrame(Framerate))
       {
-        SetTotalFramesDF(Hour, Minute, Second, Frame, Framerate);
+        SetTotalFramesNDF(Hour, Minute, Second, Frame, Framerate);
       }
       else
       {
-        SetTotalFramesNDF(Hour, Minute, Second, Frame, Framerate);
+        SetTotalFramesDF(Hour, Minute, Second, Frame, Framerate);
       }
     }
 
@@ -503,13 +577,13 @@ namespace DotnetTimecode
     /// </summary>
     private void UpdateTimecodeHoursMinutesSecondsFrames()
     {
-      if (Framerate == Framerate.fps59_94_DF || Framerate == Framerate.fps29_97_DF)
+      if (FramerateValues.IsNonDropFrame(Framerate))
       {
-        SetHourMinuteSecondFrameDF(TotalFrames, Framerate);
+        SetHourMinuteSecondFrameNDF(TotalFrames, Framerate);
       }
       else
       {
-        SetHourMinuteSecondFrameNDF(TotalFrames, Framerate);
+        SetHourMinuteSecondFrameDF(TotalFrames, Framerate);
       }
     }
 
@@ -577,25 +651,39 @@ namespace DotnetTimecode
     /// <summary>
     /// Sets the property value for TotalFrames property. Non Drop Frame.
     /// </summary>
-    /// <param name="hours">Hour.</param>
-    /// <param name="minutes">Minute.</param>
-    /// <param name="seconds">Second.</param>
-    /// <param name="frames">Frame.</param>
-    /// <param name="framerate">Framerate.</param>
+    /// <param name="hours">The timecode hour.</param>
+    /// <param name="minutes">The timecode minute.</param>
+    /// <param name="seconds">The timecode second.</param>
+    /// <param name="frames">The timecode frame.</param>
+    /// <param name="framerate">The timecode framerate.</param>
     private void SetTotalFramesNDF(int hours, int minutes, int seconds, int frames, Framerate framerate)
     {
-      decimal framerateDecimalValue = FramerateValues.FramerateAsDecimals[framerate];
-
-      int timeBase = Convert.ToInt32(Math.Round(framerateDecimalValue));
-      int secondsPerMinute = 60;
-      int minutesPerHour = 60;
-      int hourFrames = timeBase * secondsPerMinute * minutesPerHour;
-      int minuteFrames = timeBase * secondsPerMinute;
-
-      TotalFrames = (hourFrames * hours) + (minuteFrames * minutes) + (timeBase * seconds) + frames;
+      TotalFrames = CalcTotalFramesNDF(hours, minutes, seconds, frames, framerate);
     }
 
+    /// <summary>
+    /// Sets the property value for TotalFrames property. Drop Frame.
+    /// </summary>
+    /// <param name="hours">The timecode hour.</param>
+    /// <param name="minutes">The timecode minute.</param>
+    /// <param name="seconds">The timecode second.</param>
+    /// <param name="frames">The timecode frame.</param>
+    /// <param name="framerate">The timecode framerate.</param>
     private void SetTotalFramesDF(int hours, int minutes, int seconds, int frames, Framerate framerate)
+    {
+      TotalFrames = CalcTotalFramesDF(hours, minutes, seconds, frames, framerate);
+    }
+
+    /// <summary>
+    /// Calculates the totalframes DF based on the hours, minutes, seconds and frames.
+    /// </summary>
+    /// <param name="hours">The timecode hour.</param>
+    /// <param name="minutes">The timecode minute.</param>
+    /// <param name="seconds">The timecode second.</param>
+    /// <param name="frames">The timecode frame.</param>
+    /// <param name="framerate">The timecode framerate.</param>
+    /// <returns>The totalframes DF</returns>
+    private int CalcTotalFramesDF(int hours, int minutes, int seconds, int frames, Framerate framerate)
     {
       decimal framerateDecimalValue = FramerateValues.FramerateAsDecimals[framerate];
 
@@ -608,11 +696,33 @@ namespace DotnetTimecode
       int totalMinutes = (minutesPerHour * hours) + minutes;
       int totalFrames = ((hourFrames * hours) + (minuteFrames * minutes) +
       (timeBase * seconds) + frames) - (dropFrames * (totalMinutes - (totalMinutes / 10)));
-      TotalFrames = totalFrames;
+      return totalFrames;
     }
 
     /// <summary>
-    /// Validates the format of a string representing a timecode formatted "HH:MM:SS:FF" or "-HH:MM:SS:FF".<br/>
+    /// Calculates the totalframes DF based on the hours, minutes, seconds and frames.
+    /// </summary>
+    /// <param name="hours">The timecode hour.</param>
+    /// <param name="minutes">The timecode minute.</param>
+    /// <param name="seconds">The timecode second.</param>
+    /// <param name="frames">The timecode frame.</param>
+    /// <param name="framerate">The timecode framerate.</param>
+    /// <returns>The totalframes NDF</returns>
+    private int CalcTotalFramesNDF(int hours, int minutes, int seconds, int frames, Framerate framerate)
+    {
+      decimal framerateDecimalValue = FramerateValues.FramerateAsDecimals[framerate];
+      int timeBase = Convert.ToInt32(Math.Round(framerateDecimalValue));
+      int secondsPerMinute = 60;
+      int minutesPerHour = 60;
+      int hourFrames = timeBase * secondsPerMinute * minutesPerHour;
+      int minuteFrames = timeBase * secondsPerMinute;
+      int totalFrames = (hourFrames * hours) + (minuteFrames * minutes) + (timeBase * seconds) + frames;
+      return totalFrames;
+    }
+
+
+    /// <summary>
+    /// Validates the format of a string representing a timecode formatted "HH:MM:SS:FF" and "HH:MM:SS;FF".<br/>
     /// Throws an exception if the timecode string is invalid.
     /// </summary>
     private static void ValidateTimecodeString(string timecode)
@@ -622,7 +732,17 @@ namespace DotnetTimecode
         throw new ArgumentException("Invalid timecode format.", nameof(timecode));
     }
 
-    #endregion Private Methods
+    /// <summary>
+    /// Validates the format of a string representing an srt timecode formatted "HH:MM:SS:XXX".<br/>
+    /// Throws an exception if the timecode string is invalid.
+    /// </summary>
+    private static void ValidateSrtTimecodeString(string timecode)
+    {
+      Regex tcRegex = new Regex(SrtTimecodeRegexPattern);
+      if (!tcRegex.IsMatch(timecode))
+        throw new ArgumentException("Invalid timecode format.", nameof(timecode));
+    }
 
+    #endregion Private Methods
   }
 }
