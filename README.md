@@ -1,4 +1,4 @@
-![Image of a non drop frame timecode.](https://github.com/RasmusBroborg/DotnetTimecode/blob/main/assets/DotnetTimecode_asset_2997NDF.png?raw=true)
+![Image of a non drop frame timecode.](https://github.com/RasmusBroborg/DotnetTimecode/blob/main/assets/DotnetTimecode_asset_2997NDF.png)
 
 # What is Dotnet Timecode?
 
