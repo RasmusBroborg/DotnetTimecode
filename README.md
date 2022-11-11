@@ -1,8 +1,8 @@
-![Image of a non drop frame timecode.](https://github.com/RasmusBroborg/dotnet-timecode/blob/main/assets/DotnetTimecode_asset_2997NDF.png?raw=true)
+![Image of a non drop frame timecode.](https://github.com/RasmusBroborg/DotnetTimecode/blob/main/assets/DotnetTimecode_asset_2997NDF.png?raw=true)
 
 # What is Dotnet Timecode?
 
-[![CI](https://github.com/RasmusBroborg/dotnet-timecode/actions/workflows/ci.yml/badge.svg)](https://github.com/RasmusBroborg/dotnet-timecode/actions/workflows/ci.yml)
+[![CI](https://github.com/RasmusBroborg/DotnetTimecode/actions/workflows/ci.yml/badge.svg)](https://github.com/RasmusBroborg/DotnetTimecode/actions/workflows/ci.yml)
 [![NuGet](https://img.shields.io/nuget/v/DotnetTimecode.svg)](https://www.nuget.org/packages/DotnetTimecode/)
 [![Nuget](https://img.shields.io/nuget/dt/DotnetTimecode.svg)](https://nuget.org/packages/DotnetTimecode)
 
@@ -112,7 +112,7 @@ tc1 != tc2; // True
 
 ### How to contribute to the project
 
-See [CONTRIBUTING.md](https://github.com/RasmusBroborg/dotnet-timecode/blob/master/CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](https://github.com/RasmusBroborg/dotnet-timecode/blob/master/CODE_OF_CONDUCT.md) for instructions on how to contribute to the project.
+See [CONTRIBUTING.md](https://github.com/RasmusBroborg/DotnetTimecode/blob/master/CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](https://github.com/RasmusBroborg/DotnetTimecode/blob/master/CODE_OF_CONDUCT.md) for instructions on how to contribute to the project.
 
 # License
 
