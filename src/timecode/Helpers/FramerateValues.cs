@@ -4,6 +4,9 @@ namespace DotnetTimecode.Helpers
 {
   internal static class FramerateValues
   {
+    /// <summary>
+    /// Provides a conversion table for framerate enums as their decimal values.
+    /// </summary>
     internal static readonly Dictionary<Framerate, decimal> FramerateAsDecimals
     = new Dictionary<Framerate, decimal>
     {
@@ -20,5 +23,26 @@ namespace DotnetTimecode.Helpers
       { Framerate.fps59_94_NDF, 59.94m },
       { Framerate.fps60, 60m },
     };
+
+    /// <summary>
+    /// Returns true if the framerate is a non drop frame framerate.
+    /// </summary>
+    /// <param name="framerate">The target framerate.</param>
+    /// <returns>True if the framerate is a non drop frame framerate.</returns>
+    internal static bool IsNonDropFrame(Framerate framerate)
+    {
+      return !(framerate == Framerate.fps29_97_DF || framerate == Framerate.fps59_94_DF);
+    }
+
+    /// <summary>
+    /// Gets the last delimiter of a framerate. Is either ':' or ';' based on if the framerate 
+    /// is Drop Frame or Non Drop Frame.
+    /// </summary>
+    /// <param name="framerate"></param>
+    /// <returns>Either ':' if NDF or ';' if DF.</returns>
+    internal static char GetLastDelimiter(Framerate framerate)
+    {
+      return IsNonDropFrame(framerate) ? ':' : ';';
+    }
   }
 }

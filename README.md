@@ -86,7 +86,8 @@ Enums.Framerate framerate = timecodeObj.Framerate;
 ### Static Properties
 
 ```csharp
-string timecodeRegex = Timecode.RegexPattern;
+string timecodeRegex = Timecode.TimecodeRegexPattern;
+string srtTimecodeRegex = Timecode.SrtTimecodeRegexPattern;
 ```
 
 ### Operator Overloading

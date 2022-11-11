@@ -378,6 +378,29 @@ namespace DotnetTimecode.test
       result.Should().Be(expectedResult);
     }
 
+    [Theory]
+    [InlineData("10:01:20:15", Framerate.fps23_976, "10:01:20,626")] // 0.62562562562
+    [InlineData("10:01:20:15", Framerate.fps24, "10:01:20,625")] // 0.625
+    [InlineData("10:01:20:15", Framerate.fps25, "10:01:20,600")] // 0.600
+    [InlineData("10:01:20;15", Framerate.fps29_97_DF, "10:01:20,501")] // 0.5005005005
+    [InlineData("10:01:20:15", Framerate.fps29_97_NDF, "10:01:20,501")] // 0.5005005005
+    [InlineData("10:01:20:15", Framerate.fps30, "10:01:20,500")] // 0.500
+    [InlineData("10:01:20:15", Framerate.fps47_95, "10:01:20,313")] // 0.31282586027
+    [InlineData("10:01:20:15", Framerate.fps48, "10:01:20,313")] // 0.3125
+    [InlineData("10:01:20:15", Framerate.fps50, "10:01:20,300")] // 0.300
+    [InlineData("10:01:20;15", Framerate.fps59_94_DF, "10:01:20,250")] // 0.25025025025
+    [InlineData("10:01:20:15", Framerate.fps59_94_NDF, "10:01:20,250")] // 0.25025025025
+    [InlineData("10:01:20:15", Framerate.fps60, "10:01:20,250")] // 0.250
+    public void ConvertSrtTimecodeToTimecode_MultipleInputs_ExpectedBehaviour(
+      string expectedResult, Framerate originalFramerate, string timecodeStr)
+    {
+      // Act
+      var result = Timecode.ConvertSrtTimecodeToTimecode(timecodeStr, originalFramerate);
+
+      // Assert
+      result.Should().Be(expectedResult);
+    }
+
     #endregion
 
     #region Public Static Properties
@@ -396,6 +419,27 @@ namespace DotnetTimecode.test
     public void Timecode_Regex_Works(string timecodeStr, bool expectedResult)
     {
       var sut = new Regex(Timecode.TimecodeRegexPattern);
+      bool result = sut.Match(timecodeStr).Success;
+      result.Should().Be(expectedResult);
+    }
+
+    [Theory]
+    [InlineData("10:00:00,000", true)]
+    [InlineData("00:00:00,000", true)]
+    [InlineData("99:99:99,999", true)]
+    [InlineData("10:00:00:000", false)]
+    [InlineData("10:00:00;000", false)]
+    [InlineData("", false)]
+    [InlineData("10 : 00 : 00 : 000", false)]
+    [InlineData("10.00:00,00", false)]
+    [InlineData("10:00:00.00", false)]
+    [InlineData("1:0:0,0", false)]
+    [InlineData("1:00:00,00", false)]
+    [InlineData("10:00:00,0", false)]
+    [InlineData("aa:aa:aa,aa", false)]
+    public void SrtTimecode_Regex_Works(string timecodeStr, bool expectedResult)
+    {
+      var sut = new Regex(Timecode.SrtTimecodeRegexPattern);
       bool result = sut.Match(timecodeStr).Success;
       result.Should().Be(expectedResult);
     }
