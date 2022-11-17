@@ -29,20 +29,16 @@ namespace DotnetTimecode.Helpers
     /// </summary>
     /// <param name="framerate">The target framerate.</param>
     /// <returns>True if the framerate is a non drop frame framerate.</returns>
-    internal static bool IsNonDropFrame(Framerate framerate)
-    {
-      return !(framerate == Framerate.fps29_97_DF || framerate == Framerate.fps59_94_DF);
-    }
+    internal static bool IsDropFrame(Framerate framerate) =>
+      !(framerate == Framerate.fps29_97_DF || framerate == Framerate.fps59_94_DF);
 
     /// <summary>
-    /// Gets the last delimiter of a framerate. Is either ':' or ';' based on if the framerate 
+    /// Gets the last delimiter of a framerate. Is either ':' or ';' based on if the framerate
     /// is Drop Frame or Non Drop Frame.
     /// </summary>
     /// <param name="framerate"></param>
     /// <returns>Either ':' if NDF or ';' if DF.</returns>
-    internal static char GetLastDelimiter(Framerate framerate)
-    {
-      return IsNonDropFrame(framerate) ? ':' : ';';
-    }
+    internal static char GetLastDelimiter(Framerate framerate) =>
+      IsDropFrame(framerate) ? ';' : ':';
   }
 }

@@ -23,7 +23,7 @@ namespace DotnetTimecode
     /// Regular expression pattern of a timecode.
     /// Supports the format "HH:MM:SS:FF" and "HH:MM:SS;FF".
     /// </summary>
-    public static string TimecodeRegexPattern => @"^(([0-9]){2}:){2}(([0-9]){2})(;|:)([0-9]){2}$";
+    private static string TimecodeRegexPattern => @"^(([0-9]){2}:){2}(([0-9]){2})(;|:)([0-9]){2}$";
 
     /// <inheritdoc/>
     public Framerate Framerate { get; set; } = 0;
@@ -32,14 +32,13 @@ namespace DotnetTimecode
     public int FrameCount => GetFrameCount();
 
     /// <inheritdoc/>
-
-    public int Hour => (int)(_time - DateTime.MinValue).TotalHours;
-
-    /// <inheritdoc/>
-    public int Minute => (int)(_time - DateTime.MinValue).TotalMinutes;
+    public int Hour => (_time - DateTime.MinValue).Hours;
 
     /// <inheritdoc/>
-    public int Second => (int)(_time - DateTime.MinValue).TotalMilliseconds;
+    public int Minute => (_time - DateTime.MinValue).Minutes;
+
+    /// <inheritdoc/>
+    public int Second => (_time - DateTime.MinValue).Seconds;
 
     /// <inheritdoc/>
     public int Frame => GetFramePosition();
@@ -85,12 +84,12 @@ namespace DotnetTimecode
     public Timecode(int hour, int minute, int second, int frame, Framerate framerate)
     {
       Framerate = framerate;
-      int framesAsTicks = CalcTicksFromFrame(frame, framerate);
+      int framesAsMillieseconds = CalcMilliesecondsFromFrame(frame, framerate);
 
       _time.AddHours(hour);
       _time.AddMinutes(minute);
       _time.AddSeconds(second);
-      _time.AddTicks(framesAsTicks);
+      _time.AddMilliseconds(framesAsMillieseconds);
     }
 
     /// <summary>
@@ -100,17 +99,20 @@ namespace DotnetTimecode
     /// <param name="framerate">The timecode framerate.</param>
     public Timecode(string timecode, Framerate framerate)
     {
-      ValidateTimecodeString(timecode, TimecodeRegexPattern);
+      if (!IsValidSMPTETimecode(timecode)) ThrowInvalidTimecodeException(timecode);
 
       ExtractTimecodeValues(timecode, out int hour, out int minute, out int second, out int frame);
 
       _time.AddHours(hour);
       _time.AddMinutes(minute);
       _time.AddSeconds(second);
-      long framesAsTicks = CalcTicksFromFrame(frame, framerate);
-      _time.AddTicks(framesAsTicks);
+      long framesAsMillieseconds = CalcMilliesecondsFromFrame(frame, framerate);
+      _time.AddMilliseconds(framesAsMillieseconds);
       Framerate = framerate;
     }
+
+    private static void ThrowInvalidTimecodeException(string timecode)
+      => throw new ArgumentException("Invalid timecode format.", nameof(timecode));
 
     #endregion Constructors
 
@@ -143,8 +145,8 @@ namespace DotnetTimecode
     /// <inheritdoc/>
     public void AddFrames(int framesToAdd)
     {
-      long ticksToAdd = CalcTicksFromFrame(framesToAdd, Framerate);
-      _time.AddTicks(framesToAdd);
+      long milliesecondsToAdd = CalcMilliesecondsFromFrame(framesToAdd, Framerate);
+      _time.AddMilliseconds(framesToAdd);
     }
 
     /// <inheritdoc/>
@@ -163,8 +165,7 @@ namespace DotnetTimecode
     /// <returns>The timecode formatted as a timecode</returns>
     public override string ToString()
     {
-      // Drop frame framerates are formatted HH:MM:SS;FF
-      char lastColon = FramerateValues.IsNonDropFrame(Framerate) ? ':' : ';';
+      char lastColon = FramerateValues.GetLastDelimiter(Framerate);
 
       return $"{AddZeroPadding(Hour)}" +
         $":{AddZeroPadding(Minute)}" +
@@ -191,9 +192,12 @@ namespace DotnetTimecode
     /// <param name="timecode">Timecode to update, formatted as a timecode.</param>
     /// <param name="framerate">The timecode framerate.</param>
     /// <param name="hoursToAdd">Number of hours to add or subtract.</param>
+    /// <returns>A timecode string with updated hours.</returns>
+    /// <exception cref="ArgumentException">Throws if the timecode argument format is invalid.</exception>
     public static string AddHours(string timecode, Framerate framerate, int hoursToAdd)
     {
-      ValidateTimecodeString(timecode, TimecodeRegexPattern);
+      if (!IsValidSMPTETimecode(timecode)) ThrowInvalidTimecodeException(timecode);
+
       Timecode timecodeObj = new Timecode(timecode, framerate);
       timecodeObj.AddHours(hoursToAdd);
       return timecodeObj.ToString();
@@ -208,9 +212,12 @@ namespace DotnetTimecode
     /// <param name="timecode">Timecode to update, formatted as a timecode.</param>
     /// <param name="framerate">The timecode framerate.</param>
     /// <param name="minutesToAdd">Number of minutes to add or subtract.</param>
+    /// <returns>A timecode string with updated minutes.</returns>
+    /// <exception cref="ArgumentException">Throws if the timecode argument format is invalid.</exception>
     public static string AddMinutes(string timecode, Framerate framerate, int minutesToAdd)
     {
-      ValidateTimecodeString(timecode, TimecodeRegexPattern);
+      if (!IsValidSMPTETimecode(timecode)) ThrowInvalidTimecodeException(timecode);
+
       Timecode timecodeObj = new Timecode(timecode, framerate);
       timecodeObj.AddMinutes(minutesToAdd);
       return timecodeObj.ToString();
@@ -224,9 +231,12 @@ namespace DotnetTimecode
     /// </summary>
     /// <param name="timecode">Timecode to update, formatted as a timecode.</param>
     /// <param name="secondsToAdd">Number of seconds to add or subtract.</param>
+    /// <returns>A timecode string with updated seconds.</returns>
+    /// <exception cref="ArgumentException">Throws if the timecode argument format is invalid.</exception>
     public static string AddSeconds(string timecode, Framerate framerate, int secondsToAdd)
     {
-      ValidateTimecodeString(timecode, TimecodeRegexPattern);
+      if (!IsValidSMPTETimecode(timecode)) ThrowInvalidTimecodeException(timecode);
+
       Timecode timecodeObj = new Timecode(timecode, framerate);
       timecodeObj.AddSeconds(secondsToAdd);
       return timecodeObj.ToString();
@@ -242,7 +252,8 @@ namespace DotnetTimecode
     /// <param name="inputString">Timecode to update, formatted as a timecode.</param>
     /// <param name="frames">Number of frames to add or subtract.</param>
     /// <param name="framerate"></param>
-    /// <returns></returns>
+    /// <returns>A timecode with updated frames.</returns>
+    /// <exception cref="ArgumentException">Throws if the timecode argument format is invalid.</exception>
     public static string AddFrames(string inputString, Framerate framerate, int frames)
     {
       Timecode timecode = new Timecode(inputString, framerate);
@@ -261,8 +272,7 @@ namespace DotnetTimecode
     public static string ConvertFramerate(
       string originalTimecode, Framerate originalFramerate, Framerate destinationFramerate)
     {
-      // Validate the original timecode format
-      ValidateTimecodeString(originalTimecode, TimecodeRegexPattern);
+      if (!IsValidSMPTETimecode(originalTimecode)) ThrowInvalidTimecodeException(originalTimecode);
 
       Timecode timecode = new Timecode(originalTimecode, originalFramerate);
       timecode.ConvertFramerate(destinationFramerate);
@@ -380,7 +390,14 @@ namespace DotnetTimecode
 
     private int GetFrameCount()
     {
-      throw new NotImplementedException();
+      var frameCount = (Hour * 3600 + Minute * 60 + Second) * Math.Round(FramerateValues.FramerateAsDecimals[Framerate]) + Frame;
+
+      if (FramerateValues.IsDropFrame(Framerate))
+      {
+        var totalMinutes = this.hours * 60 + this.minutes;
+        var df = this.frameRate === 29.97 ? 2 : 4;
+        this.frameCount -= df * (totalMinutes - Math.floor(totalMinutes / 10));
+      }
     }
 
     /// <summary>
@@ -442,14 +459,15 @@ namespace DotnetTimecode
     }
 
     /// <summary>
-    /// Validates the format of a string representing a timecode.<br/>
-    /// Throws an exception if the timecode string is invalid.
+    ///
     /// </summary>
-    protected static void ValidateTimecodeString(string timecode, string regexPattern)
+    /// <param name="timecode"></param>
+    /// <returns>True if the argument follows the format HH:MM:SS:FF or HH:MM:SS;FF</returns>
+    public static bool IsValidSMPTETimecode(string timecode)
     {
-      Regex tcRegex = new Regex(regexPattern);
-      if (!tcRegex.IsMatch(timecode))
-        throw new ArgumentException("Invalid timecode format.", nameof(timecode));
+      string SMPTEPattern = @"^(([0-9]){2}:){2}(([0-9]){2})(;|:)([0-9]){2}$";
+      Regex tcRegex = new Regex(SMPTEPattern);
+      return tcRegex.IsMatch(timecode);
     }
 
     // TODO!!
@@ -459,41 +477,9 @@ namespace DotnetTimecode
     }
 
     // TODO!!
-    protected int CalcTicksFromFrame(int frame, Framerate framerate)
+    protected int CalcMilliesecondsFromFrame(int frame, Framerate framerate)
     {
-      int d;
-      int m;
-
-      int dropFrames = round(framerate * .066666);
-      int framesPerHour = round(framerate * 60 * 60);
-      int framesPer24Hours = framesPerHour * 24;
-      int framesPer10Minutes = round(framerate * 60 * 10);
-      int framesPerMinute = (round(framerate) * 60) - dropFrames;
-
-      while (framenumber < 0)
-      {
-        framenumber = framesPer24Hours + framenumber;
-      }
-
-      framenumber = framenumber % framesPer24Hours;
-
-      d = framenumber \ framesPer10Minutes;
-      m = framenumber % framesPer10Minutes
-
-if (m > dropFrames)
-      {
-        framenumber = framenumber + (dropFrames * 9 * d) + dropFrames * ((m - dropFrames) \ framesPerMinute);
-      }
-      else
-      {
-        framenumber = framenumber + dropFrames * 9 * d;
-      }
-
-      int frRound = round(framerate);
-      int frames = framenumber % frRound;
-      int seconds = (framenumber \ frRound) % 60;
-      int minutes = ((framenumber \ frRound) \ 60) % 60;
-      int hours = (((framenumber \ frRound) \ 60) \ 60);
+      bool isDropFrame = FramerateValues.IsDropFrame(framerate);
     }
 
     /// <summary>

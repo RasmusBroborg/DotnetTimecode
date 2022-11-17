@@ -13,12 +13,14 @@ namespace DotnetTimecode.Models
   /// where XXX represents millieseconds.
   ///
   /// </summary>
-  public class TimecodeSubRip : Timecode, ITimecodeRegex
+  public class TimecodeSubRip : Timecode
   {
     /// <inheritdoc/>
     public TimecodeSubRip(Framerate framerate) : base(framerate)
     {
     }
+
+    public const string SubRip = @"^(([0-9]){2}:){2}(([0-9]){2})(;|:)([0-9]){2}$";
 
     /// <inheritdoc/>
     public TimecodeSubRip(TimeSpan timespan, Framerate framerate)
@@ -33,7 +35,7 @@ namespace DotnetTimecode.Models
     /// <param name="framerate">The timecode framerate.</param>
     public TimecodeSubRip(string timecode, Framerate framerate)
     {
-      ValidateTimecodeString(timecode, TimecodeRegexPattern);
+      IsValidSMPTETimecode(timecode, TimecodeRegexPattern);
       ExtractTimecodeValues(timecode,
       out int hour, out int minute, out int second, out int millieseconds);
 
