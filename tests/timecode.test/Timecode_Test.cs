@@ -1,5 +1,4 @@
-﻿
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 using DotnetTimecode.Enums;
 
@@ -12,17 +11,17 @@ namespace DotnetTimecode.test
     #region Constructors
 
     [Theory] // Arrange
-    [InlineData("10:00:00:00", Enums.Framerate.fps25, "10:00:00:00")]
-    [InlineData("10:00:00;00", Enums.Framerate.fps25, "10:00:00:00")]
-    [InlineData("10:00:00:00", Enums.Framerate.fps29_97_DF, "10:00:00;00")]
-    [InlineData("10:00:00;00", Enums.Framerate.fps29_97_DF, "10:00:00;00")]
-    [InlineData("-10:00:00:00", Enums.Framerate.fps48, "-10:00:00:00")]
-    [InlineData("10:00:00;50", Enums.Framerate.fps25, "10:00:02:00")]
-    [InlineData("10:09:10:00", Enums.Framerate.fps59_94_DF, "10:09:10;00")]
-    [InlineData("-10:00:00;00", Enums.Framerate.fps29_97_DF, "-10:00:00;00")]
-    [InlineData("00:00:00;25", Enums.Framerate.fps24, "00:00:01:01")]
+    [InlineData("10:00:00:00", Framerate.fps25, "10:00:00:00")]
+    [InlineData("10:00:00;00", Framerate.fps25, "10:00:00:00")]
+    [InlineData("10:00:00:00", Framerate.fps29_97_DF, "10:00:00;00")]
+    [InlineData("10:00:00;00", Framerate.fps29_97_DF, "10:00:00;00")]
+    [InlineData("-10:00:00:00", Framerate.fps48, "-10:00:00:00")]
+    [InlineData("10:00:00;50", Framerate.fps25, "10:00:02:00")]
+    [InlineData("10:09:10:00", Framerate.fps59_94_DF, "10:09:10;00")]
+    [InlineData("-10:00:00;00", Framerate.fps29_97_DF, "-10:00:00;00")]
+    [InlineData("00:00:00;25", Framerate.fps24, "00:00:01:01")]
     public void Constructor_ConstructUsingValidPositiveStringInput_Succeeds(
-      string validTimecodeFormat, Enums.Framerate framerate, string expectedResult)
+      string validTimecodeFormat, Framerate framerate, string expectedResult)
     {
       // Act
       Timecode result = new Timecode(validTimecodeFormat, framerate);
@@ -32,12 +31,12 @@ namespace DotnetTimecode.test
     }
 
     [Theory] // Arrange
-    [InlineData("10:-00:00:00", Enums.Framerate.fps25)]
-    [InlineData("foobar", Enums.Framerate.fps25)]
-    [InlineData("10:001:00:700", Enums.Framerate.fps30)]
-    [InlineData("10.00.00.00", Enums.Framerate.fps29_97_DF)]
+    [InlineData("10:-00:00:00", Framerate.fps25)]
+    [InlineData("foobar", Framerate.fps25)]
+    [InlineData("10:001:00:700", Framerate.fps30)]
+    [InlineData("10.00.00.00", Framerate.fps29_97_DF)]
     public void Constructor_ConstructUsingIncorrectStringInput_ThrowsException(
-      string incorrectTimecodeFormat, Enums.Framerate framerate)
+      string incorrectTimecodeFormat, Framerate framerate)
     {
       // Act
       Action act = () => new Timecode(incorrectTimecodeFormat, framerate);
@@ -49,54 +48,19 @@ namespace DotnetTimecode.test
     [Fact]
     public void Constructor_UsingOnlyFramerate_Succeeds()
     {
-      var sut = new Timecode(Enums.Framerate.fps24);
+      var sut = new Timecode(Framerate.fps24);
       sut.ToString().Should().Be("00:00:00:00");
-    }
-
-    [Fact]
-    public void Constructor_UsingTotalFrames25fps_Succeeds()
-    {
-      var tenHoursAsTotalFrames = 900000;
-      var sut = new Timecode(tenHoursAsTotalFrames, Enums.Framerate.fps25);
-      sut.ToString().Should().Be("10:00:00:00");
-    }
-
-    [Fact]
-    public void Constructor_UsingHHMMSSFF23976fps_Succeeds()
-    {
-      var sut = new Timecode(10, 00, 00, 00, Enums.Framerate.fps23_976);
-      sut.TotalFrames.Should().Be(864000);
-    }
-
-    [Fact]
-    public void Constructor_UsingHHMMSSFF50fps_Succeeds()
-    {
-      var sut = new Timecode(10, 00, 00, 00, Enums.Framerate.fps50);
-      sut.TotalFrames.Should().Be(1800000);
-    }
-
-    [Fact]
-    public void Constructor_UsingHHMMSSFFDropFrame5994fps_Succeeds()
-    {
-      var sut = new Timecode(10, 00, 00, 00, Enums.Framerate.fps59_94_DF);
-      sut.TotalFrames.Should().Be(2157840);
-    }
-
-    [Fact]
-    public void Constructor_UsingStringInput_Succeeds()
-    {
-      var sut = new Timecode("10:00:00:00", Enums.Framerate.fps24);
-      sut.TotalFrames.Should().Be(864000);
     }
 
     [Fact]
     public void Constructor_UsingIncorrectFormatInput_ThrowsException()
     {
       string incorrectTimecodeFormat = "10:a0:00:00";
-      Action act = () => new Timecode(incorrectTimecodeFormat, Enums.Framerate.fps24);
+      Action act = () => new Timecode(incorrectTimecodeFormat, Framerate.fps24);
       act.Should().Throw<ArgumentException>();
     }
-    #endregion
+
+    #endregion Constructors
 
     #region Public Methods
 
@@ -233,7 +197,7 @@ namespace DotnetTimecode.test
       result.Should().Be(expectedResult);
     }
 
-    #endregion
+    #endregion Public Methods
 
     #region Public Static Methods
 
@@ -241,7 +205,7 @@ namespace DotnetTimecode.test
     [InlineData("10:00:00:00", Framerate.fps24, 1, "11:00:00:00")]
     [InlineData("10:00:00:00", Framerate.fps48, 100, "110:00:00:00")]
     [InlineData("10:00:00:00", Framerate.fps60, -1, "09:00:00:00")]
-    [InlineData("10:00:00:00", Framerate.fps50, - 11, "-01:00:00:00")]
+    [InlineData("10:00:00:00", Framerate.fps50, -11, "-01:00:00:00")]
     [InlineData("10:00:00;00", Framerate.fps29_97_DF, -11, "-01:00:00;00")]
     public void AddHours_StaticMethodTest_ExpectedResults(
       string timecodeStr, Framerate framerate, int hoursToAdd, string expectedResult)
@@ -343,7 +307,7 @@ namespace DotnetTimecode.test
     [InlineData("+10:00:00:00")]
     public void AddFrames_StaticMethodTestWithInvalidInput_ThrowsException(string invalidTimecodeStr)
     {
-      Action act = () => Timecode.AddFrames(invalidTimecodeStr, Enums.Framerate.fps25, 1);
+      Action act = () => Timecode.AddFrames(invalidTimecodeStr, Framerate.fps25, 1);
       act.Should().Throw<ArgumentException>();
     }
 
@@ -351,7 +315,7 @@ namespace DotnetTimecode.test
     [Fact]
     public void ConvertFramerate_StaticMethodTest_ExpectedResults()
     {
-      var result = Timecode.ConvertFramerate("10:00:00:00", Enums.Framerate.fps23_976, Enums.Framerate.fps59_94_NDF);
+      var result = Timecode.ConvertFramerate("10:00:00:00", Framerate.fps23_976, Framerate.fps59_94_NDF);
       result.Should().Be("04:00:00:00");
     }
 
@@ -401,7 +365,7 @@ namespace DotnetTimecode.test
       result.Should().Be(expectedResult);
     }
 
-    #endregion
+    #endregion Public Static Methods
 
     #region Public Static Properties
 
@@ -444,7 +408,7 @@ namespace DotnetTimecode.test
       result.Should().Be(expectedResult);
     }
 
-    #endregion
+    #endregion Public Static Properties
 
     #region Operator Overloads
 
@@ -452,8 +416,8 @@ namespace DotnetTimecode.test
     public void Timecode_Subtracts_ResultIsSubtracted()
     {
       // Arrange
-      var t1 = new Timecode(11, 11, 11, 0, Enums.Framerate.fps29_97_NDF);
-      var t2 = new Timecode(1, 1, 1, 0, Enums.Framerate.fps29_97_NDF);
+      var t1 = new Timecode(11, 11, 11, 0, Framerate.fps29_97_NDF);
+      var t2 = new Timecode(1, 1, 1, 0, Framerate.fps29_97_NDF);
 
       // Act
       var result = t1 - t2;
@@ -468,8 +432,8 @@ namespace DotnetTimecode.test
     public void Timecode_Add_AddsTimecode()
     {
       // Arrange
-      var t1 = new Timecode(11, 11, 11, 0, Enums.Framerate.fps29_97_NDF);
-      var t2 = new Timecode(1, 1, 1, 0, Enums.Framerate.fps29_97_NDF);
+      var t1 = new Timecode(11, 11, 11, 0, Framerate.fps29_97_NDF);
+      var t2 = new Timecode(1, 1, 1, 0, Framerate.fps29_97_NDF);
 
       // Act
       var result = t1 + t2;
@@ -484,40 +448,38 @@ namespace DotnetTimecode.test
     public void Timecode_Subtracts_throughCompoundAssignmentOperator()
     {
       //Arrange
-      var t1 = new Timecode(11, 11, 11, 0, Enums.Framerate.fps29_97_NDF);
-      var t2 = new Timecode(1, 1, 1, 0, Enums.Framerate.fps29_97_NDF);
+      var t1 = new Timecode(11, 11, 11, 0, Framerate.fps29_97_NDF);
+      var t2 = new Timecode(1, 1, 1, 0, Framerate.fps29_97_NDF);
 
-      //Act 
+      //Act
       t1 -= t2;
       //Assert
       Assert.Equal(10, t1.Hour);
       Assert.Equal(10, t1.Minute);
       Assert.Equal(10, t1.Second);
-
     }
 
     [Fact]
     public void Timecode_Add_throughCompoundAssignmentOperator()
     {
       //Arrange
-      var t1 = new Timecode(11, 11, 11, 0, Enums.Framerate.fps29_97_NDF);
-      var t2 = new Timecode(1, 1, 1, 0, Enums.Framerate.fps29_97_NDF);
+      var t1 = new Timecode(11, 11, 11, 0, Framerate.fps29_97_NDF);
+      var t2 = new Timecode(1, 1, 1, 0, Framerate.fps29_97_NDF);
 
-      //Act 
+      //Act
       t1 += t2;
       //Assert
       Assert.Equal(12, t1.Hour);
       Assert.Equal(12, t1.Minute);
       Assert.Equal(12, t1.Second);
-
     }
 
     [Fact]
     public void Timecode_Add_DifferentFrameRate_ThrowsException()
     {
       // Arrange
-      var t1 = new Timecode(11, 11, 11, 0, Enums.Framerate.fps29_97_NDF);
-      var t2 = new Timecode(1, 1, 1, 0, Enums.Framerate.fps50);
+      var t1 = new Timecode(11, 11, 11, 0, Framerate.fps29_97_NDF);
+      var t2 = new Timecode(1, 1, 1, 0, Framerate.fps50);
 
       // Assert
       Assert.Throws<InvalidOperationException>(() => t1 + t2);
@@ -527,7 +489,7 @@ namespace DotnetTimecode.test
     public void Timecode_Equals_OtherTimeCode()
     {
       // Arrange
-      var t1 = new Timecode(11, 11, 11, 0, Enums.Framerate.fps29_97_NDF);
+      var t1 = new Timecode(11, 11, 11, 0, Framerate.fps29_97_NDF);
       var t2 = t1;
 
       // Act
@@ -541,7 +503,7 @@ namespace DotnetTimecode.test
     public void Timecode_NotEquals_OtherTimeCode()
     {
       // Arrange
-      var t1 = new Timecode(11, 11, 11, 0, Enums.Framerate.fps29_97_NDF);
+      var t1 = new Timecode(11, 11, 11, 0, Framerate.fps29_97_NDF);
       var t2 = t1;
 
       // Act
@@ -555,8 +517,8 @@ namespace DotnetTimecode.test
     public void Timecode_SmallerThan_OtherTimeCode()
     {
       // Arrange
-      var t1 = new Timecode(11, 11, 11, 0, Enums.Framerate.fps29_97_NDF);
-      var t2 = new Timecode(12, 12, 12, 0, Enums.Framerate.fps29_97_NDF);
+      var t1 = new Timecode(11, 11, 11, 0, Framerate.fps29_97_NDF);
+      var t2 = new Timecode(12, 12, 12, 0, Framerate.fps29_97_NDF);
 
       // Act
       var result = t1 < t2;
@@ -569,8 +531,8 @@ namespace DotnetTimecode.test
     public void Timecode_NotSmallerThan_OtherTimeCode()
     {
       // Arrange
-      var t1 = new Timecode(11, 11, 11, 0, Enums.Framerate.fps29_97_NDF);
-      var t2 = new Timecode(10, 11, 12, 0, Enums.Framerate.fps29_97_NDF);
+      var t1 = new Timecode(11, 11, 11, 0, Framerate.fps29_97_NDF);
+      var t2 = new Timecode(10, 11, 12, 0, Framerate.fps29_97_NDF);
 
       // Act
       var result = t1 < t2;
@@ -583,8 +545,8 @@ namespace DotnetTimecode.test
     public void Timecode_LargerThan_OtherTimeCode()
     {
       // Arrange
-      var t1 = new Timecode(11, 11, 11, 0, Enums.Framerate.fps29_97_NDF);
-      var t2 = new Timecode(10, 11, 12, 0, Enums.Framerate.fps29_97_NDF);
+      var t1 = new Timecode(11, 11, 11, 0, Framerate.fps29_97_NDF);
+      var t2 = new Timecode(10, 11, 12, 0, Framerate.fps29_97_NDF);
 
       // Act
       var result = t1 > t2;
@@ -597,8 +559,8 @@ namespace DotnetTimecode.test
     public void Timecode_NotLargerThan_OtherTimeCode()
     {
       // Arrange
-      var t1 = new Timecode(11, 11, 11, 0, Enums.Framerate.fps29_97_NDF);
-      var t2 = new Timecode(12, 11, 12, 0, Enums.Framerate.fps29_97_NDF);
+      var t1 = new Timecode(11, 11, 11, 0, Framerate.fps29_97_NDF);
+      var t2 = new Timecode(12, 11, 12, 0, Framerate.fps29_97_NDF);
 
       // Act
       var result = t1 > t2;
@@ -611,8 +573,8 @@ namespace DotnetTimecode.test
     public void Timecode_LargerOrEqual_OtherTimeCode()
     {
       // Arrange
-      var t1 = new Timecode("10:00:00:00", Enums.Framerate.fps29_97_NDF);
-      var t2 = new Timecode("10:00:00:00", Enums.Framerate.fps29_97_NDF);
+      var t1 = new Timecode("10:00:00:00", Framerate.fps29_97_NDF);
+      var t2 = new Timecode("10:00:00:00", Framerate.fps29_97_NDF);
 
       // Act
       var result = t1 >= t2;
@@ -625,8 +587,8 @@ namespace DotnetTimecode.test
     public void Timecode_LessOrEqual_OtherTimeCode()
     {
       // Arrange
-      var t1 = new Timecode("10:00:00:00", Enums.Framerate.fps29_97_NDF);
-      var t2 = new Timecode("10:00:00:00", Enums.Framerate.fps29_97_NDF);
+      var t1 = new Timecode("10:00:00:00", Framerate.fps29_97_NDF);
+      var t2 = new Timecode("10:00:00:00", Framerate.fps29_97_NDF);
 
       // Act
       var result = t1 <= t2;
@@ -639,8 +601,8 @@ namespace DotnetTimecode.test
     public void LessThan_Timecodes_With_Different_Framerates()
     {
       // Arrange
-      var t1 = new Timecode(10, 0, 0, 0, Enums.Framerate.fps25);
-      var t2 = new Timecode(10, 0, 0, 0, Enums.Framerate.fps24);
+      var t1 = new Timecode(10, 0, 0, 0, Framerate.fps25);
+      var t2 = new Timecode(10, 0, 0, 0, Framerate.fps24);
 
       // Act
       Action comparison = () => { var res = t1 > t2; };
@@ -653,8 +615,8 @@ namespace DotnetTimecode.test
     public void MoreThan_Timecodes_With_Different_Framerates()
     {
       // Arrange
-      var t1 = new Timecode(10, 0, 0, 0, Enums.Framerate.fps25);
-      var t2 = new Timecode(10, 0, 0, 0, Enums.Framerate.fps24);
+      var t1 = new Timecode(10, 0, 0, 0, Framerate.fps25);
+      var t2 = new Timecode(10, 0, 0, 0, Framerate.fps24);
 
       // Act
       Action comparison = () => { var res = t1 < t2; };
@@ -667,8 +629,8 @@ namespace DotnetTimecode.test
     public void Negative_Timecodes_Check_Addition_Overloading()
     {
       // Arrange
-      var t1 = new Timecode(10, 00, 00, 00, Enums.Framerate.fps25);
-      var t2 = new Timecode("-20:00:00:00", Enums.Framerate.fps25);
+      var t1 = new Timecode(10, 00, 00, 00, Framerate.fps25);
+      var t2 = new Timecode("-20:00:00:00", Framerate.fps25);
       var expectedResult = "-10:00:00:00";
 
       // Act
@@ -683,8 +645,8 @@ namespace DotnetTimecode.test
     public void Negative_Timecodes_Check_Addition_Overloading_DropFrame()
     {
       // Arrange
-      var t1 = new Timecode(10, 00, 00, 00, Enums.Framerate.fps59_94_DF);
-      var t2 = new Timecode("-20:00:00:00", Enums.Framerate.fps59_94_DF);
+      var t1 = new Timecode(10, 00, 00, 00, Framerate.fps59_94_DF);
+      var t2 = new Timecode("-20:00:00:00", Framerate.fps59_94_DF);
 
       // Act
       var expectedResult = "-10:00:00;00";
@@ -697,6 +659,6 @@ namespace DotnetTimecode.test
       result.Should().Be(expectedResult);
     }
 
-    #endregion
+    #endregion Operator Overloads
   }
 }
