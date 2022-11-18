@@ -2,6 +2,9 @@
 
 namespace DotnetTimecode.Interfaces
 {
+  /// <summary>
+  /// Defines a generalized SMPTE Timecode model.
+  /// </summary>
   public interface ITimecode
   {
     /// <summary>

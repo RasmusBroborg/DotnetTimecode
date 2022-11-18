@@ -40,5 +40,28 @@ namespace DotnetTimecode.Helpers
     /// <returns>Either ':' if NDF or ';' if DF.</returns>
     internal static char GetLastDelimiter(Framerate framerate) =>
       IsDropFrame(framerate) ? ';' : ':';
+
+    /// <summary>
+    /// Gets the last delimiter based on the delimiter option value.
+    /// </summary>
+    /// <param name="framerate"></param>
+    /// <returns>A delimiter defined by the provided enum type.</returns>
+    internal static char GetLastDelimiter(TimecodeFormatOption option)
+    {
+      switch (option)
+      {
+        case TimecodeFormatOption.ColonFrameDelimiter:
+          return ':';
+
+        case TimecodeFormatOption.SemicolonFrameDelimiter:
+          return ';';
+
+        case TimecodeFormatOption.CommaFrameDelimiter:
+          return ',';
+
+        default:
+          throw new NotImplementedException();
+      }
+    }
   }
 }
