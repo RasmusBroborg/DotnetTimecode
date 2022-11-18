@@ -23,7 +23,7 @@ namespace DotnetTimecode
     public Framerate Framerate { get; set; } = 0;
 
     /// <inheritdoc/>
-    public int FrameCount => GetFrameCount();
+    public int FrameCount => CalcFrameCount();
 
     /// <inheritdoc/>
     public int Hour => (_time - DateTime.MinValue).Hours;
@@ -426,7 +426,7 @@ namespace DotnetTimecode
 
     #region Private Methods
 
-    private int GetFrameCount()
+    private int CalcFrameCount()
     {
       TimeSpan timecodeDuration = _time - DateTime.MinValue;
       double timecodeDurationInMilleseconds = timecodeDuration.TotalMilliseconds;
