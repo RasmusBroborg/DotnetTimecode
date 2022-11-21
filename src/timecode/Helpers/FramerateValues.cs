@@ -2,6 +2,9 @@
 
 namespace DotnetTimecode.Helpers
 {
+  /// <summary>
+  /// Provides methods related to framerate values.
+  /// </summary>
   internal static class FramerateValues
   {
     /// <summary>
@@ -35,7 +38,7 @@ namespace DotnetTimecode.Helpers
     }
 
     /// <summary>
-    /// Gets the last delimiter of a framerate. Is either ':' or ';' based on if the framerate 
+    /// Gets the last delimiter of a framerate. Is either ':' or ';' based on if the framerate
     /// is Drop Frame or Non Drop Frame.
     /// </summary>
     /// <param name="framerate"></param>

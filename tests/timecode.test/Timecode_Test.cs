@@ -439,7 +439,7 @@ namespace DotnetTimecode.test
     [InlineData("1:00:00,00", false)]
     [InlineData("10:00:00,0", false)]
     [InlineData("aa:aa:aa,aa", false)]
-    public void SrtTimecode_Regex_Works(string timecodeStr, bool expectedResult)
+    public void SubtitleTimecode_Regex_Works(string timecodeStr, bool expectedResult)
     {
       var sut = new Regex(Timecode.SubtitleTimecodeRegexPattern);
       bool result = sut.Match(timecodeStr).Success;

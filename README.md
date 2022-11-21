@@ -32,9 +32,9 @@ Examples:
 using DotnetTimecode;
 using DotnetTimecode.Enums;
 
-var foo = new Timecode(Framerate.fps30);
-var bar = new Timecode(10, 00, 00, 00, Framerate.fps59_94_DF);
-var baz = new Timecode("10:00:00:00", Framerate.fps24);
+ITimecode foo = new Timecode(Framerate.fps30);
+ITimecode bar = new Timecode(10, 00, 00, 00, Framerate.fps59_94_DF);
+ITimecode baz = new Timecode("10:00:00:00", Framerate.fps24);
 
 foo.ToString() // "00:00:00:00"
 bar.AddMinutes(-61).ToString(); // "08:59:00;00"
@@ -60,7 +60,7 @@ timecodeObj.AddSeconds(int seconds);
 timecodeObj.AddFrames(int frames);
 timecodeObj.ConvertFramerate(Enums.Framerate targetFramerate);
 string timecodeString = timecodeObj.ToString();
-string timecodeString = timecodeObj.ToSubtitleString();
+string subtitleTimecodeString = timecodeObj.ToSubtitleString();
 ```
 
 ### Static methods
@@ -96,8 +96,8 @@ string srtTimecodeRegex = Timecode.SrtTimecodeRegexPattern;
 ### Operator Overloading
 
 ```csharp
-var timecodeObj1 = new Timecode(10, 0, 0, 0, Enums.Framerate.fps23_976); // 10:00:00:00
-var timecodeObj2 = new Timecode(1, 0, 0, 0, Enums.Framerate.fps23_976); // 01:00:00:00
+ITimecode timecodeObj1 = new Timecode(10, 0, 0, 0, Enums.Framerate.fps23_976); // 10:00:00:00
+ITimecode timecodeObj2 = new Timecode(1, 0, 0, 0, Enums.Framerate.fps23_976); // 01:00:00:00
 
 timecodeObj1 + timecodeObj2;  // 11:00:00:00
 timecodeObj1 - timecodeObj2;  // 09:00:00:00
