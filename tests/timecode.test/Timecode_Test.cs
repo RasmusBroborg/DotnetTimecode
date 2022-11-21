@@ -1,5 +1,4 @@
-﻿
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 using DotnetTimecode.Enums;
 
@@ -44,6 +43,30 @@ namespace DotnetTimecode.test
 
       // Assert
       act.Should().Throw<ArgumentException>();
+    }
+
+    [Theory]
+    [InlineData("10:01:20:15", Framerate.fps23_976, "10:01:20,626")] // 0.62562562562
+    [InlineData("10:01:20:15", Framerate.fps24, "10:01:20,625")] // 0.625
+    [InlineData("10:01:20:15", Framerate.fps25, "10:01:20,600")] // 0.600
+    [InlineData("10:01:20;15", Framerate.fps29_97_DF, "10:01:20,501")] // 0.5005005005
+    [InlineData("10:01:20:15", Framerate.fps29_97_NDF, "10:01:20,501")] // 0.5005005005
+    [InlineData("10:01:20:15", Framerate.fps30, "10:01:20,500")] // 0.500
+    [InlineData("10:01:20:15", Framerate.fps47_95, "10:01:20,313")] // 0.31282586027
+    [InlineData("10:01:20:15", Framerate.fps48, "10:01:20,313")] // 0.3125
+    [InlineData("10:01:20:15", Framerate.fps50, "10:01:20,300")] // 0.300
+    [InlineData("10:01:20;15", Framerate.fps59_94_DF, "10:01:20,250")] // 0.25025025025
+    [InlineData("10:01:20:15", Framerate.fps59_94_NDF, "10:01:20,250")] // 0.25025025025
+    [InlineData("10:01:20:15", Framerate.fps60, "10:01:20,250")] // 0.250
+    public void Constructor_ConstructUsingSubtitleTimecodeMultipleInputs_ExpectedBehaviour(
+      string expectedResult, Framerate originalFramerate, string timecodeStr)
+    {
+      // Act
+      var timecode = new Timecode(timecodeStr, originalFramerate);
+      var result = timecode.ToString();
+
+      // Assert
+      result.Should().Be(expectedResult);
     }
 
     [Fact]
@@ -96,7 +119,8 @@ namespace DotnetTimecode.test
       Action act = () => new Timecode(incorrectTimecodeFormat, Enums.Framerate.fps24);
       act.Should().Throw<ArgumentException>();
     }
-    #endregion
+
+    #endregion Constructors
 
     #region Public Methods
 
@@ -215,6 +239,30 @@ namespace DotnetTimecode.test
       result.ToString().Should().Be(expectedResult);
     }
 
+    [Theory]
+    [InlineData("10:01:20:15", Framerate.fps23_976, "10:01:20,626")] // 0.62562562562
+    [InlineData("10:01:20:15", Framerate.fps24, "10:01:20,625")] // 0.625
+    [InlineData("10:01:20:15", Framerate.fps25, "10:01:20,600")] // 0.600
+    [InlineData("10:01:20;15", Framerate.fps29_97_DF, "10:01:20,501")] // 0.5005005005
+    [InlineData("10:01:20:15", Framerate.fps29_97_NDF, "10:01:20,501")] // 0.5005005005
+    [InlineData("10:01:20:15", Framerate.fps30, "10:01:20,500")] // 0.500
+    [InlineData("10:01:20:15", Framerate.fps47_95, "10:01:20,313")] // 0.31282586027
+    [InlineData("10:01:20:15", Framerate.fps48, "10:01:20,313")] // 0.3125
+    [InlineData("10:01:20:15", Framerate.fps50, "10:01:20,300")] // 0.300
+    [InlineData("10:01:20;15", Framerate.fps59_94_DF, "10:01:20,250")] // 0.25025025025
+    [InlineData("10:01:20:15", Framerate.fps59_94_NDF, "10:01:20,250")] // 0.25025025025
+    [InlineData("10:01:20:15", Framerate.fps60, "10:01:20,250")] // 0.250
+    public void ToSubtitleString_MultipleInputs_ExpectedBehaviour(
+      string timecodeStr, Framerate originalFramerate, string expectedResult)
+    {
+      // Act
+      var timecode = new Timecode(timecodeStr, originalFramerate);
+      var result = timecode.ToSubtitleString();
+
+      // Assert
+      result.Should().Be(expectedResult);
+    }
+
     // TODO: Add more test cases for conversion.
     [Theory]
     [InlineData("10:00:00:00", Framerate.fps24, Framerate.fps25, "09:36:00:00")]
@@ -233,7 +281,7 @@ namespace DotnetTimecode.test
       result.Should().Be(expectedResult);
     }
 
-    #endregion
+    #endregion Public Methods
 
     #region Public Static Methods
 
@@ -241,7 +289,7 @@ namespace DotnetTimecode.test
     [InlineData("10:00:00:00", Framerate.fps24, 1, "11:00:00:00")]
     [InlineData("10:00:00:00", Framerate.fps48, 100, "110:00:00:00")]
     [InlineData("10:00:00:00", Framerate.fps60, -1, "09:00:00:00")]
-    [InlineData("10:00:00:00", Framerate.fps50, - 11, "-01:00:00:00")]
+    [InlineData("10:00:00:00", Framerate.fps50, -11, "-01:00:00:00")]
     [InlineData("10:00:00;00", Framerate.fps29_97_DF, -11, "-01:00:00;00")]
     public void AddHours_StaticMethodTest_ExpectedResults(
       string timecodeStr, Framerate framerate, int hoursToAdd, string expectedResult)
@@ -355,53 +403,7 @@ namespace DotnetTimecode.test
       result.Should().Be("04:00:00:00");
     }
 
-    [Theory]
-    [InlineData("10:01:20:15", Framerate.fps23_976, "10:01:20,626")] // 0.62562562562
-    [InlineData("10:01:20:15", Framerate.fps24, "10:01:20,625")] // 0.625
-    [InlineData("10:01:20:15", Framerate.fps25, "10:01:20,600")] // 0.600
-    [InlineData("10:01:20:15", Framerate.fps29_97_DF, "10:01:20,501")] // 0.5005005005
-    [InlineData("10:01:20;15", Framerate.fps29_97_NDF, "10:01:20,501")] // 0.5005005005
-    [InlineData("10:01:20:15", Framerate.fps30, "10:01:20,500")] // 0.500
-    [InlineData("10:01:20:15", Framerate.fps47_95, "10:01:20,313")] // 0.31282586027
-    [InlineData("10:01:20:15", Framerate.fps48, "10:01:20,313")] // 0.3125
-    [InlineData("10:01:20;15", Framerate.fps50, "10:01:20,300")] // 0.300
-    [InlineData("10:01:20;15", Framerate.fps59_94_DF, "10:01:20,250")] // 0.25025025025
-    [InlineData("10:01:20;15", Framerate.fps59_94_NDF, "10:01:20,250")] // 0.25025025025
-    [InlineData("10:01:20;15", Framerate.fps60, "10:01:20,250")] // 0.250
-    public void ConvertTimecodeToSrtTimecode_MultipleInputs_ExpectedBehaviour(
-      string timecodeStr, Framerate originalFramerate, string expectedResult)
-    {
-      // Act
-      var result = Timecode.ConvertTimecodeToSrtTimecode(timecodeStr, originalFramerate);
-
-      // Assert
-      result.Should().Be(expectedResult);
-    }
-
-    [Theory]
-    [InlineData("10:01:20:15", Framerate.fps23_976, "10:01:20,626")] // 0.62562562562
-    [InlineData("10:01:20:15", Framerate.fps24, "10:01:20,625")] // 0.625
-    [InlineData("10:01:20:15", Framerate.fps25, "10:01:20,600")] // 0.600
-    [InlineData("10:01:20;15", Framerate.fps29_97_DF, "10:01:20,501")] // 0.5005005005
-    [InlineData("10:01:20:15", Framerate.fps29_97_NDF, "10:01:20,501")] // 0.5005005005
-    [InlineData("10:01:20:15", Framerate.fps30, "10:01:20,500")] // 0.500
-    [InlineData("10:01:20:15", Framerate.fps47_95, "10:01:20,313")] // 0.31282586027
-    [InlineData("10:01:20:15", Framerate.fps48, "10:01:20,313")] // 0.3125
-    [InlineData("10:01:20:15", Framerate.fps50, "10:01:20,300")] // 0.300
-    [InlineData("10:01:20;15", Framerate.fps59_94_DF, "10:01:20,250")] // 0.25025025025
-    [InlineData("10:01:20:15", Framerate.fps59_94_NDF, "10:01:20,250")] // 0.25025025025
-    [InlineData("10:01:20:15", Framerate.fps60, "10:01:20,250")] // 0.250
-    public void ConvertSrtTimecodeToTimecode_MultipleInputs_ExpectedBehaviour(
-      string expectedResult, Framerate originalFramerate, string timecodeStr)
-    {
-      // Act
-      var result = Timecode.ConvertSrtTimecodeToTimecode(timecodeStr, originalFramerate);
-
-      // Assert
-      result.Should().Be(expectedResult);
-    }
-
-    #endregion
+    #endregion Public Static Methods
 
     #region Public Static Properties
 
@@ -439,12 +441,12 @@ namespace DotnetTimecode.test
     [InlineData("aa:aa:aa,aa", false)]
     public void SrtTimecode_Regex_Works(string timecodeStr, bool expectedResult)
     {
-      var sut = new Regex(Timecode.SrtTimecodeRegexPattern);
+      var sut = new Regex(Timecode.SubtitleTimecodeRegexPattern);
       bool result = sut.Match(timecodeStr).Success;
       result.Should().Be(expectedResult);
     }
 
-    #endregion
+    #endregion Public Static Properties
 
     #region Operator Overloads
 
@@ -487,13 +489,12 @@ namespace DotnetTimecode.test
       var t1 = new Timecode(11, 11, 11, 0, Enums.Framerate.fps29_97_NDF);
       var t2 = new Timecode(1, 1, 1, 0, Enums.Framerate.fps29_97_NDF);
 
-      //Act 
+      //Act
       t1 -= t2;
       //Assert
       Assert.Equal(10, t1.Hour);
       Assert.Equal(10, t1.Minute);
       Assert.Equal(10, t1.Second);
-
     }
 
     [Fact]
@@ -503,13 +504,12 @@ namespace DotnetTimecode.test
       var t1 = new Timecode(11, 11, 11, 0, Enums.Framerate.fps29_97_NDF);
       var t2 = new Timecode(1, 1, 1, 0, Enums.Framerate.fps29_97_NDF);
 
-      //Act 
+      //Act
       t1 += t2;
       //Assert
       Assert.Equal(12, t1.Hour);
       Assert.Equal(12, t1.Minute);
       Assert.Equal(12, t1.Second);
-
     }
 
     [Fact]
@@ -697,6 +697,6 @@ namespace DotnetTimecode.test
       result.Should().Be(expectedResult);
     }
 
-    #endregion
+    #endregion Operator Overloads
   }
 }
