@@ -54,12 +54,13 @@ Timecode(string timecode, Enums.Framerate framerate);
 ### Object methods
 
 ```csharp
-string timecodeString = timecodeObj.ToString();
 timecodeObj.AddHours(int hours);
 timecodeObj.AddMinutes(int minutes);
 timecodeObj.AddSeconds(int seconds);
 timecodeObj.AddFrames(int frames);
 timecodeObj.ConvertFramerate(Enums.Framerate targetFramerate);
+string timecodeString = timecodeObj.ToString();
+string timecodeString = timecodeObj.ToSubtitleString();
 ```
 
 ### Static methods
@@ -70,8 +71,8 @@ string timecodeString = Timecode.AddMinutes(string timecode, int minutes);
 string timecodeString = Timecode.AddSeconds(string timecode, int seconds);
 string timecodeString = Timecode.AddFrames(string timecode, int frames);
 string timecodeString = Timecode.ConvertFramerate(string timecode, Enums.Framerate originalFramerate, Enums.Framerate targetFramerate);
-string timecodeString = Timecode.ConvertSrtTimecodeToTimecode(string srtTimecode, Enums.Framerate framerate);
-string srtTimecodeString = Timecode.ConvertTimecodeToSrtTimecode(string timecode, Enums.Framerate framerate);
+string timecodeString = Timecode.ConvertSMPTETimecodeToSubtitleTimecode(string srtTimecode, Enums.Framerate framerate);
+string subtitleTimecodeString = Timecode.ConvertSubtitleTimecodeToSMPTETimecode(string timecode, Enums.Framerate framerate);
 ```
 
 ### Object Properties
@@ -95,17 +96,17 @@ string srtTimecodeRegex = Timecode.SrtTimecodeRegexPattern;
 ### Operator Overloading
 
 ```csharp
-var tc1 = new Timecode(10, 0, 0, 0, Enums.Framerate.fps23_976); // 10:00:00:00
-var tc2 = new Timecode(1, 0, 0, 0, Enums.Framerate.fps23_976); // 01:00:00:00
+var timecodeObj1 = new Timecode(10, 0, 0, 0, Enums.Framerate.fps23_976); // 10:00:00:00
+var timecodeObj2 = new Timecode(1, 0, 0, 0, Enums.Framerate.fps23_976); // 01:00:00:00
 
-tc1 + tc2;  // 11:00:00:00
-tc1 - tc2;  // 09:00:00:00
-tc1 < tc2;  // False
-tc1 > tc2;  // True
-tc1 <= tc2; // False
-tc1 >= tc2; // True
-tc1 == tc2; // False
-tc1 != tc2; // True
+timecodeObj1 + timecodeObj2;  // 11:00:00:00
+timecodeObj1 - timecodeObj2;  // 09:00:00:00
+timecodeObj1 < timecodeObj2;  // False
+timecodeObj1 > timecodeObj2;  // True
+timecodeObj1 <= timecodeObj2; // False
+timecodeObj1 >= timecodeObj2; // True
+timecodeObj1 == timecodeObj2; // False
+timecodeObj1 != timecodeObj2; // True
 ```
 
 # Contributions
