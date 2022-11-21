@@ -26,7 +26,7 @@ namespace DotnetTimecode
     public int FrameCount => CalcFrameCount();
 
     /// <inheritdoc/>
-    public int Hour => (_time - DateTime.MinValue).Hours;
+    public int Hour => Convert.ToInt32((_time - DateTime.MinValue).TotalHours); // TODO: Needs to take drop frames into consideration
 
     /// <inheritdoc/>
     public int Minute => (_time - DateTime.MinValue).Minutes;
@@ -428,12 +428,23 @@ namespace DotnetTimecode
 
     private int CalcFrameCount()
     {
-      TimeSpan timecodeDuration = _time - DateTime.MinValue;
-      double timecodeDurationInMilleseconds = timecodeDuration.TotalMilliseconds;
+      //TimeSpan timecodeDuration = _time - DateTime.MinValue;
+      //double timecodeDurationInMilleseconds = timecodeDuration.TotalMilliseconds;
+      //decimal frameRateDecimalVal = FramerateValues.FramerateAsDecimals[Framerate];
+      //int frameCount = Convert.ToInt32(
+      //  Convert.ToDecimal(timecodeDurationInMilleseconds) * frameRateDecimalVal / 1000);
+      //return frameCount;
+
       decimal frameRateDecimalVal = FramerateValues.FramerateAsDecimals[Framerate];
-      int frameCount = Convert.ToInt32(
-        Convert.ToDecimal(timecodeDurationInMilleseconds) * frameRateDecimalVal / 1000);
-      return frameCount;
+
+      int dropFrames = Convert.ToInt32(Math.Round(frameRateDecimalVal * 0.066666m));
+      int timeBase = Convert.ToInt32(Math.Round(frameRateDecimalVal));
+
+      int hourFrames = timeBase * 60 * 60;
+      int minuteFrames = timeBase * 60;
+      int totalMinutes = (60 * Hour) + minutes;
+      int frameNumber = ((hourFrames * hours) + (minuteFrames * minutes) + (timeBase * seconds) + frames) - (dropFrames * (totalMinutes - (totalMinutes \ 10)));
+      return frameNumber;
     }
 
     /// <summary>
