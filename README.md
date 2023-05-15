@@ -66,13 +66,13 @@ string subtitleTimecodeString = timecodeObj.ToSubtitleString();
 ### Static methods
 
 ```csharp
-string timecodeString = Timecode.AddHours(string timecode, int hours);
-string timecodeString = Timecode.AddMinutes(string timecode, int minutes);
-string timecodeString = Timecode.AddSeconds(string timecode, int seconds);
-string timecodeString = Timecode.AddFrames(string timecode, int frames);
-string timecodeString = Timecode.ConvertFramerate(string timecode, Enums.Framerate originalFramerate, Enums.Framerate targetFramerate);
-string timecodeString = Timecode.ConvertSMPTETimecodeToSubtitleTimecode(string srtTimecode, Enums.Framerate framerate);
-string subtitleTimecodeString = Timecode.ConvertSubtitleTimecodeToSMPTETimecode(string timecode, Enums.Framerate framerate);
+string timecodeString = Timecode.AddHours(timecodeString, hoursInteger);
+string timecodeString = Timecode.AddMinutes(timecodeString, minutesInteger);
+string timecodeString = Timecode.AddSeconds(timecodeString, secondsInteger);
+string timecodeString = Timecode.AddFrames(timecodeString, framesInteger);
+string timecodeString = Timecode.ConvertFramerate(timecodeString, originalFramerateEnum, targetFramerateEnum);
+string timecodeString = Timecode.ConvertSMPTETimecodeToSubtitleTimecode(srtTimecodeString, framerateEnum);
+string subtitleTimecodeString = Timecode.ConvertSubtitleTimecodeToSMPTETimecode(timecodeString, framerateEnum);
 ```
 
 ### Object Properties
