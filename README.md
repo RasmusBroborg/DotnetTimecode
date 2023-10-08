@@ -5,6 +5,7 @@
 [![CI](https://github.com/RasmusBroborg/DotnetTimecode/actions/workflows/ci.yml/badge.svg)](https://github.com/RasmusBroborg/DotnetTimecode/actions/workflows/ci.yml)
 [![NuGet](https://img.shields.io/nuget/v/DotnetTimecode.svg)](https://www.nuget.org/packages/DotnetTimecode/)
 [![Nuget](https://img.shields.io/nuget/dt/DotnetTimecode.svg)](https://nuget.org/packages/DotnetTimecode)
+[![CodeQL](https://github.com/RasmusBroborg/DotnetTimecode/actions/workflows/codeql.yml/badge.svg)](https://github.com/RasmusBroborg/DotnetTimecode/actions/workflows/codeql.yml)
 
 Dotnet Timecode is a C# class library for working with SMPTE Timecodes defined by the Society of Motion Picture and Television Engineers in the SMPTE 12M specification.
 
