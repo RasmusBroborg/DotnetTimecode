@@ -55,11 +55,11 @@ Timecode(string timecode, Enums.Framerate framerate);
 ### Object methods
 
 ```csharp
-timecodeObj.AddHours(int hours);
-timecodeObj.AddMinutes(int minutes);
-timecodeObj.AddSeconds(int seconds);
-timecodeObj.AddFrames(int frames);
-timecodeObj.ConvertFramerate(Enums.Framerate targetFramerate);
+timecodeObj.AddHours(hours);
+timecodeObj.AddMinutes(minutes);
+timecodeObj.AddSeconds(seconds);
+timecodeObj.AddFrames(frames);
+timecodeObj.ConvertFramerate(targetFramerate);
 string timecodeString = timecodeObj.ToString();
 string subtitleTimecodeString = timecodeObj.ToSubtitleString();
 ```
